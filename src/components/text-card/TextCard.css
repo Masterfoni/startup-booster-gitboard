@@ -1,0 +1,15 @@
+.text-card-head {
+  line-height: 3.5em;
+  margin-top: 24px;
+  text-align: left;
+  margin-left: 1em;
+  vertical-align: middle;
+}
+
+.text-card-body {
+  text-align: center;
+  vertical-align: middle;
+  line-height: 2em;
+  font-size: 3.5em;
+  border-top: 1px ridge #e3e4e5;
+}

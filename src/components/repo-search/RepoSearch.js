@@ -26,7 +26,11 @@ class RepoSearch extends Component {
 
   handleRepoChange = event => this.setState({ repoValue: event.target.value });
 
-  handleSubmit(event) {
+  handleDataFetched = gitHubData => {
+    this.props.onDataFetched(gitHubData);
+  };
+
+  handleSubmit = event => {
     event.preventDefault();
 
     if (!this.state.ownerValue || !this.state.repoValue) {
@@ -73,15 +77,14 @@ class RepoSearch extends Component {
             var pullRequestList = this.getPullRequestList(result);
             var issueList = this.getIssueList(result);
 
-            console.log(
-              "Average issue close time: ",
-              this.calculateAverageIssueCloseTime(issueList)
-            );
-
-            console.log(
-              "Average pull request merge time: ",
-              this.calculateAveragePullRequestMergeTime(pullRequestList)
-            );
+            this.handleDataFetched({
+              averagePullRequestMergeTime: this.calculateAveragePullRequestMergeTime(
+                pullRequestList
+              ),
+              averageIssueCloseTime: this.calculateAverageIssueCloseTime(
+                issueList
+              )
+            });
 
             this.organizePullRequestsBySize(pullRequestList);
           }
@@ -92,7 +95,7 @@ class RepoSearch extends Component {
         }
       );
     }
-  }
+  };
 
   organizePullRequestsBySize(pullRequests) {
     this.setState({
@@ -127,7 +130,7 @@ class RepoSearch extends Component {
   }
 
   calculateAveragePullRequestMergeTime(pullRequests) {
-    return DateTimeUtils.getTotalDaysHoursMinutes(
+    return (
       pullRequests.reduce(
         (previousTime, pullRequest) =>
           previousTime +
@@ -141,7 +144,7 @@ class RepoSearch extends Component {
   }
 
   calculateAverageIssueCloseTime(issues) {
-    return DateTimeUtils.getTotalDaysHoursMinutes(
+    return (
       issues.reduce(
         (previousTime, issue) =>
           previousTime +
@@ -172,27 +175,23 @@ class RepoSearch extends Component {
 
   render() {
     return (
-      <div className="row">
-        <div className="col-md-12">
-          <form onSubmit={this.handleSubmit}>
-            <input
-              placeholder="Owner"
-              type="text"
-              value={this.state.ownerValue}
-              onChange={this.handleOwnerChange}
-            />
+      <form onSubmit={this.handleSubmit}>
+        <input
+          placeholder="Owner"
+          type="text"
+          value={this.state.ownerValue}
+          onChange={this.handleOwnerChange}
+        />
 
-            <input
-              placeholder="Repo"
-              type="text"
-              className="blurred"
-              value={this.state.repoValue}
-              onChange={this.handleRepoChange}
-            />
-            <input type="submit" value="Submit" hidden />
-          </form>
-        </div>
-      </div>
+        <input
+          placeholder="Repo"
+          type="text"
+          className="blurred"
+          value={this.state.repoValue}
+          onChange={this.handleRepoChange}
+        />
+        <input type="submit" value="Submit" hidden />
+      </form>
     );
   }
 }
