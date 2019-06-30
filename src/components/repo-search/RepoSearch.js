@@ -130,31 +130,41 @@ class RepoSearch extends Component {
   }
 
   calculateAveragePullRequestMergeTime(pullRequests) {
-    return (
-      pullRequests.reduce(
-        (previousTime, pullRequest) =>
-          previousTime +
-          Math.abs(
-            new Date(pullRequest.mergedAt).getTime() -
-              new Date(pullRequest.createdAt).getTime()
-          ),
-        0
-      ) / pullRequests.length
-    );
+    let averageTime = 0;
+
+    if (pullRequests.length > 0) {
+      averageTime =
+        pullRequests.reduce(
+          (previousTime, pullRequest) =>
+            previousTime +
+            Math.abs(
+              new Date(pullRequest.mergedAt).getTime() -
+                new Date(pullRequest.createdAt).getTime()
+            ),
+          0
+        ) / pullRequests.length;
+    }
+
+    return averageTime;
   }
 
   calculateAverageIssueCloseTime(issues) {
-    return (
-      issues.reduce(
-        (previousTime, issue) =>
-          previousTime +
-          Math.abs(
-            new Date(issue.closedAt).getTime() -
-              new Date(issue.createdAt).getTime()
-          ),
-        0
-      ) / issues.length
-    );
+    let averageTime = 0;
+
+    if (issues.length > 0) {
+      averageTime =
+        issues.reduce(
+          (previousTime, issue) =>
+            previousTime +
+            Math.abs(
+              new Date(issue.closedAt).getTime() -
+                new Date(issue.createdAt).getTime()
+            ),
+          0
+        ) / issues.length;
+    }
+
+    return averageTime;
   }
 
   getPullRequestList(queryResult) {
