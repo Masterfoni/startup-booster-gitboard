@@ -1,12 +1,19 @@
 import React, { Component } from "react";
 import "./RepoSearch.css";
 import RequestHelper from "../../utils/request-helper";
+import DateUtils from "../../utils/date-utils";
 
 class RepoSearch extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { ownerValue: "", repoValue: "" };
+    this.state = {
+      ownerValue: "",
+      repoValue: "",
+      smallPullRequests: [],
+      mediumPullRequests: [],
+      largePullRequests: []
+    };
 
     this.handleOwnerChange = this.handleOwnerChange.bind(this);
     this.handleRepoChange = this.handleRepoChange.bind(this);
@@ -25,13 +32,34 @@ class RepoSearch extends Component {
     if (!this.state.ownerValue || !this.state.repoValue) {
       alert("Please inform both Owner and Repository name values.");
     } else {
+      const ISSUE_STATE_QUALIFIER = `states: CLOSED`;
+      const ONWER_QUALIFIER = `owner: ${this.state.ownerValue}`;
+      const NAME_QUALIFIER = `name: ${this.state.repoValue}`;
+      const LAST_MONTH_QUALIFIER = `filterBy: { since: "${DateUtils.getLastMonth()}" }`;
+      const QUANTITY_QUALIFIER = `last: 100`;
+
+      const PULL_REQUEST_STATE_QUALIFIER = `states: MERGED`;
+
       const GET_REPO = `{
-        user(login: "${this.state.ownerValue}") {
-          name
-          url
-          repository(name: "${this.state.repoValue}") {
-            name
-            url
+        repository(${ONWER_QUALIFIER}, ${NAME_QUALIFIER}) {
+          pullRequests(${PULL_REQUEST_STATE_QUALIFIER}, ${QUANTITY_QUALIFIER}) {
+            edges {
+              node {
+                createdAt
+                mergedAt
+                additions
+                deletions
+              }
+            }
+
+          }
+          issues(${ISSUE_STATE_QUALIFIER}, ${LAST_MONTH_QUALIFIER}, ${QUANTITY_QUALIFIER}) {
+            edges {
+              node {
+                createdAt
+                closedAt
+              }
+            }
           }
         }
       }`;
@@ -42,6 +70,24 @@ class RepoSearch extends Component {
             alert(result.data.errors.map(err => err.message));
           } else {
             console.log(result);
+
+            console.log(
+              "Average issue close time: ",
+              this.calculateAverageIssueCloseTime(
+                result.data.data.repository.issues.edges
+              )
+            );
+
+            console.log(
+              "Average pull request merge time: ",
+              this.calculateAveragePullRequestMergeTime(
+                result.data.data.repository.pullRequests.edges
+              )
+            );
+
+            this.organizePullRequestsBySize(
+              result.data.data.repository.pullRequests.edges
+            );
           }
         },
         error => {
@@ -50,6 +96,80 @@ class RepoSearch extends Component {
         }
       );
     }
+  }
+
+  organizePullRequestsBySize(pullRequests) {
+    pullRequests.forEach(pullRequest => {
+      let totalModifications =
+        pullRequest.node.additions + pullRequest.node.deletions;
+
+      if (totalModifications <= 100) {
+        Array.prototype.push.call(
+          pullRequest.node,
+          this.state.mediumPullRequests
+        );
+        // this.setState({
+        //   smallPullRequests: Array.prototype.push.call(
+        //     pullRequest.node,
+        //     this.state.smallPullRequests
+        //   )
+        // });
+      } else if (totalModifications <= 1000) {
+        Array.prototype.push.call(
+          pullRequest.node,
+          this.state.mediumPullRequests
+        );
+        // this.setState({
+        //   mediumPullRequests: Array.prototype.push.call(
+        //     pullRequest.node,
+        //     this.state.mediumPullRequests
+        //   )
+        // });
+      } else {
+        Array.prototype.push.call(
+          pullRequest.node,
+          this.state.mediumPullRequests
+        );
+        // this.setState({
+        //   largePullRequests: Array.prototype.push.call(
+        //     pullRequest.node,
+        //     this.state.largePullRequests
+        //   )
+        // });
+      }
+    });
+
+    console.log("Small PR`s organized: ", this.state.smallPullRequests);
+    console.log("Medium PR`s organized: ", this.state.mediumPullRequests);
+    console.log("Large PR`s organized: ", this.state.largePullRequests);
+  }
+
+  calculateAveragePullRequestMergeTime(pullRequests) {
+    return DateUtils.formatToDaysHoursMinutes(
+      pullRequests.reduce(
+        (previousTime, issue) =>
+          previousTime +
+          Math.abs(
+            new Date(issue.node.mergedAt).getTime() -
+              new Date(issue.node.createdAt).getTime()
+          ),
+        0
+      ) / pullRequests.length
+    );
+  }
+
+  calculateAverageIssueCloseTime(issues) {
+    return DateUtils.formatToDaysHoursMinutes(
+      issues.reduce(
+        (previousTime, issue) =>
+          previousTime +
+          Math.abs(
+            new Date(issue.node.closedAt).getTime() -
+              new Date(issue.node.createdAt).getTime()
+          ),
+        0
+      ) / issues.length
+    );
   }
 
   render() {
