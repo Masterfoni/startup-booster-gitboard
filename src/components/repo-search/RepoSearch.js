@@ -37,8 +37,8 @@ class RepoSearch extends Component {
       alert("Please inform both Owner and Repository name values.");
     } else {
       const ISSUE_STATE_QUALIFIER = `states: CLOSED`;
-      const ONWER_QUALIFIER = `owner: ${this.state.ownerValue}`;
-      const NAME_QUALIFIER = `name: ${this.state.repoValue}`;
+      const ONWER_QUALIFIER = `owner: "${this.state.ownerValue}"`;
+      const NAME_QUALIFIER = `name: "${this.state.repoValue}"`;
       const LAST_MONTH_QUALIFIER = `filterBy: { since: "${DateTimeUtils.getLastMonth()}" }`;
       const QUANTITY_QUALIFIER = `last: 100`;
 
