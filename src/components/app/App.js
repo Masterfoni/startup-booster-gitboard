@@ -52,14 +52,14 @@ class App extends Component {
           </div>
 
           <div className="row ml-2 mr-2 mb-4">
-            <div className="col-md-6">
+            <div className="col-sm-12 col-md-6">
               <TextCard
                 titleText={"Average Pull Request Merge Time"}
                 bodyText={this.state.averageMergeTimeText}
               />
             </div>
 
-            <div className="col-md-6">
+            <div className="col-sm-12 col-md-6">
               <TextCard
                 titleText={"Average Issue Close Time"}
                 bodyText={this.state.averageCloseTimeText}
