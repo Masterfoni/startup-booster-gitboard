@@ -45,7 +45,7 @@ class App extends Component {
     return (
       <div className="App">
         <div className="container-fluid bg-light">
-          <div className="row shadow mb-4 bg-white">
+          <div className="row thin-shadow mb-4 bg-white">
             <div className="col-md-12">
               <RepoSearch onDataFetched={this.handleDataFetched} />
             </div>

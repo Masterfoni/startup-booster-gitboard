@@ -12,7 +12,7 @@ class TextCard extends Component {
 
   render() {
     return (
-      <div className="shadow bg-white">
+      <div className="thin-shadow bg-white">
         <div className="text-card-head">
           <span className="text-head">
             {this.props.titleText ? this.props.titleText : "No data to display"}
