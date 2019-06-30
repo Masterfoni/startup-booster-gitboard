@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "./RepoSearch.css";
 import RequestHelper from "../../utils/request-helper";
-import DateUtils from "../../utils/date-utils";
+import DateTimeUtils from "../../utils/date-time-utils";
 
 class RepoSearch extends Component {
   constructor(props) {
@@ -35,7 +35,7 @@ class RepoSearch extends Component {
       const ISSUE_STATE_QUALIFIER = `states: CLOSED`;
       const ONWER_QUALIFIER = `owner: ${this.state.ownerValue}`;
       const NAME_QUALIFIER = `name: ${this.state.repoValue}`;
-      const LAST_MONTH_QUALIFIER = `filterBy: { since: "${DateUtils.getLastMonth()}" }`;
+      const LAST_MONTH_QUALIFIER = `filterBy: { since: "${DateTimeUtils.getLastMonth()}" }`;
       const QUANTITY_QUALIFIER = `last: 100`;
 
       const PULL_REQUEST_STATE_QUALIFIER = `states: MERGED`;
@@ -99,43 +99,34 @@ class RepoSearch extends Component {
   }
 
   organizePullRequestsBySize(pullRequests) {
+    this.setState({
+      smallPullRequests: [],
+      mediumPullRequests: [],
+      largePullRequests: []
+    });
+
     pullRequests.forEach(pullRequest => {
       let totalModifications =
         pullRequest.node.additions + pullRequest.node.deletions;
 
       if (totalModifications <= 100) {
-        Array.prototype.push.call(
-          pullRequest.node,
-          this.state.mediumPullRequests
-        );
-        // this.setState({
-        //   smallPullRequests: Array.prototype.push.call(
-        //     pullRequest.node,
-        //     this.state.smallPullRequests
-        //   )
-        // });
+        this.setState({
+          smallPullRequests: this.state.smallPullRequests.concat([
+            pullRequest.node
+          ])
+        });
       } else if (totalModifications <= 1000) {
-        Array.prototype.push.call(
-          pullRequest.node,
-          this.state.mediumPullRequests
-        );
-        // this.setState({
-        //   mediumPullRequests: Array.prototype.push.call(
-        //     pullRequest.node,
-        //     this.state.mediumPullRequests
-        //   )
-        // });
+        this.setState({
+          mediumPullRequests: this.state.mediumPullRequests.concat([
+            pullRequest.node
+          ])
+        });
       } else {
-        Array.prototype.push.call(
-          pullRequest.node,
-          this.state.mediumPullRequests
-        );
-        // this.setState({
-        //   largePullRequests: Array.prototype.push.call(
-        //     pullRequest.node,
-        //     this.state.largePullRequests
-        //   )
-        // });
+        this.setState({
+          largePullRequests: this.state.largePullRequests.concat([
+            pullRequest.node
+          ])
+        });
       }
     });
 
@@ -145,7 +136,7 @@ class RepoSearch extends Component {
   }
 
   calculateAveragePullRequestMergeTime(pullRequests) {
-    return DateUtils.formatToDaysHoursMinutes(
+    return DateTimeUtils.getTotalDaysHoursMinutes(
       pullRequests.reduce(
         (previousTime, issue) =>
           previousTime +
@@ -159,7 +150,7 @@ class RepoSearch extends Component {
   }
 
   calculateAverageIssueCloseTime(issues) {
-    return DateUtils.formatToDaysHoursMinutes(
+    return DateTimeUtils.getTotalDaysHoursMinutes(
       issues.reduce(
         (previousTime, issue) =>
           previousTime +
