@@ -66,28 +66,24 @@ class RepoSearch extends Component {
 
       RequestHelper.sendRequest(GET_REPO).then(
         result => {
-          if (result.data.errors) {
-            alert(result.data.errors.map(err => err.message));
+          var errorMessages = this.getErrorMessages(result);
+          if (errorMessages.length > 0) {
+            alert(errorMessages);
           } else {
-            console.log(result);
+            var pullRequestList = this.getPullRequestList(result);
+            var issueList = this.getIssueList(result);
 
             console.log(
               "Average issue close time: ",
-              this.calculateAverageIssueCloseTime(
-                result.data.data.repository.issues.edges
-              )
+              this.calculateAverageIssueCloseTime(issueList)
             );
 
             console.log(
               "Average pull request merge time: ",
-              this.calculateAveragePullRequestMergeTime(
-                result.data.data.repository.pullRequests.edges
-              )
+              this.calculateAveragePullRequestMergeTime(pullRequestList)
             );
 
-            this.organizePullRequestsBySize(
-              result.data.data.repository.pullRequests.edges
-            );
+            this.organizePullRequestsBySize(pullRequestList);
           }
         },
         error => {
@@ -106,26 +102,21 @@ class RepoSearch extends Component {
     });
 
     pullRequests.forEach(pullRequest => {
-      let totalModifications =
-        pullRequest.node.additions + pullRequest.node.deletions;
+      let totalModifications = pullRequest.additions + pullRequest.deletions;
 
       if (totalModifications <= 100) {
         this.setState({
-          smallPullRequests: this.state.smallPullRequests.concat([
-            pullRequest.node
-          ])
+          smallPullRequests: this.state.smallPullRequests.concat([pullRequest])
         });
       } else if (totalModifications <= 1000) {
         this.setState({
           mediumPullRequests: this.state.mediumPullRequests.concat([
-            pullRequest.node
+            pullRequest
           ])
         });
       } else {
         this.setState({
-          largePullRequests: this.state.largePullRequests.concat([
-            pullRequest.node
-          ])
+          largePullRequests: this.state.largePullRequests.concat([pullRequest])
         });
       }
     });
@@ -138,11 +129,11 @@ class RepoSearch extends Component {
   calculateAveragePullRequestMergeTime(pullRequests) {
     return DateTimeUtils.getTotalDaysHoursMinutes(
       pullRequests.reduce(
-        (previousTime, issue) =>
+        (previousTime, pullRequest) =>
           previousTime +
           Math.abs(
-            new Date(issue.node.mergedAt).getTime() -
-              new Date(issue.node.createdAt).getTime()
+            new Date(pullRequest.mergedAt).getTime() -
+              new Date(pullRequest.createdAt).getTime()
           ),
         0
       ) / pullRequests.length
@@ -155,12 +146,28 @@ class RepoSearch extends Component {
         (previousTime, issue) =>
           previousTime +
           Math.abs(
-            new Date(issue.node.closedAt).getTime() -
-              new Date(issue.node.createdAt).getTime()
+            new Date(issue.closedAt).getTime() -
+              new Date(issue.createdAt).getTime()
           ),
         0
       ) / issues.length
     );
+  }
+
+  getPullRequestList(queryResult) {
+    return queryResult.data.data.repository.pullRequests.edges.map(
+      edge => edge.node
+    );
+  }
+
+  getIssueList(queryResult) {
+    return queryResult.data.data.repository.issues.edges.map(edge => edge.node);
+  }
+
+  getErrorMessages(queryResult) {
+    return queryResult.data.errors
+      ? queryResult.data.errors.map(err => err.message)
+      : [];
   }
 
   render() {
