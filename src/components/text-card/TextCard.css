@@ -1,8 +1,8 @@
 .text-card-head {
-  line-height: 3.5em;
-  margin-top: 24px;
-  text-align: left;
+  padding-top: 1em;
+  padding-bottom: 1em;
   margin-left: 1em;
+  text-align: left;
   vertical-align: middle;
 }
 

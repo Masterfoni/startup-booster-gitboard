@@ -1,6 +1,6 @@
-.text-card-head {
-  line-height: 3.5em;
-  margin-top: 24px;
+.bar-chart-card-head {
+  padding-top: 1em;
+  padding-bottom: 1em;
   text-align: left;
   margin-left: 1em;
   vertical-align: middle;
