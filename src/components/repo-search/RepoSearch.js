@@ -55,7 +55,7 @@ class RepoSearch extends Component {
                 deletions
               }
             }
-
+            totalCount
           }
           issues(${ISSUE_STATE_QUALIFIER}, ${LAST_MONTH_QUALIFIER}, ${QUANTITY_QUALIFIER}) {
             edges {
@@ -64,6 +64,7 @@ class RepoSearch extends Component {
                 closedAt
               }
             }
+            totalCount
           }
         }
       }`;
@@ -74,6 +75,7 @@ class RepoSearch extends Component {
           if (errorMessages.length > 0) {
             alert(errorMessages);
           } else {
+            console.log(result);
             var pullRequestList = this.getPullRequestList(result);
             var issueList = this.getIssueList(result);
 
