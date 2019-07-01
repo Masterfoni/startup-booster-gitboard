@@ -1,0 +1,15 @@
+.text-card-head {
+  line-height: 3.5em;
+  margin-top: 24px;
+  text-align: left;
+  margin-left: 1em;
+  vertical-align: middle;
+}
+
+.bar-chart-card-body {
+  text-align: center;
+  vertical-align: middle;
+  padding: 0.5em;
+  font-size: 3.5em;
+  border-top: 1px ridge #e3e4e5;
+}
