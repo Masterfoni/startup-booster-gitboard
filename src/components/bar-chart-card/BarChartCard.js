@@ -3,8 +3,9 @@ import "./BarChartCard.css";
 import Chart from "chart.js";
 
 class BarChartCard extends Component {
-  buildChart(data) {
+  buildChart() {
     let context = document.getElementById("defBarChart").getContext("2d");
+    const self = this;
 
     new Chart(context, {
       type: "bar",
@@ -12,7 +13,7 @@ class BarChartCard extends Component {
         labels: this.props.chartData.labels,
         datasets: [
           {
-            data: this.props.chartData.data,
+            data: this.props.chartData.data.totalHours,
             backgroundColor: [
               "rgba(54, 162, 235)",
               "rgba(54, 162, 235)",
@@ -41,12 +42,13 @@ class BarChartCard extends Component {
 
           callbacks: {
             label: function(tooltipItem, data) {
-              console.log(data);
-              console.log(tooltipItem);
               return "Average Time      " + tooltipItem.value + "h";
             },
-            afterLabel: function() {
-              return "Pull Requests     XX";
+            afterLabel: function(tooltipItem) {
+              return (
+                "Pull Requests      " +
+                self.props.chartData.data.totalCounts[tooltipItem.index]
+              );
             }
           }
         },

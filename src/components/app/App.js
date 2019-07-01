@@ -38,11 +38,18 @@ class App extends Component {
 
     return {
       labels: ["Small", "Medium", "Large"],
-      data: [
-        DateTimeUtils.getTotalHours(smallPullRequestAverageTime),
-        DateTimeUtils.getTotalHours(mediumPullRequestAverageTime),
-        DateTimeUtils.getTotalHours(largePullRequestAverageTime)
-      ]
+      data: {
+        totalHours: [
+          DateTimeUtils.getTotalHours(smallPullRequestAverageTime),
+          DateTimeUtils.getTotalHours(mediumPullRequestAverageTime),
+          DateTimeUtils.getTotalHours(largePullRequestAverageTime)
+        ],
+        totalCounts: [
+          pullRequestData.smallPullRequestsData.totalCount,
+          pullRequestData.mediumPullRequestsData.totalCount,
+          pullRequestData.largePullRequestsData.totalCount
+        ]
+      }
     };
   }
 
