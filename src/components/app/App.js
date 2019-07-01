@@ -3,6 +3,7 @@ import "./App.css";
 import RepoSearch from "../repo-search/RepoSearch";
 import TextCard from "../text-card/TextCard";
 import DateTimeUtils from "../../utils/date-time-utils";
+import BarChartCard from "../bar-chart-card/BarChartCard";
 
 class App extends Component {
   constructor(props) {
@@ -10,7 +11,8 @@ class App extends Component {
 
     this.state = {
       averageMergeTimeText: null,
-      averageCloseTimeText: null
+      averageCloseTimeText: null,
+      organizedPullRequestData: null
     };
   }
 
@@ -22,9 +24,27 @@ class App extends Component {
       ),
       averageCloseTimeText: this.buildAverageTimeText(
         gitHubData.averageIssueCloseTime
+      ),
+      organizedPullRequestData: this.buildBarChartData(
+        gitHubData.organizedPullRequestData
       )
     });
   };
+
+  buildBarChartData(pullRequestData) {
+    const smallPullRequestAverageTime = pullRequestData.smallPullRequestsData.getAverageTime();
+    const mediumPullRequestAverageTime = pullRequestData.mediumPullRequestsData.getAverageTime();
+    const largePullRequestAverageTime = pullRequestData.largePullRequestsData.getAverageTime();
+
+    return {
+      labels: ["Small", "Medium", "Large"],
+      data: [
+        DateTimeUtils.getTotalHours(smallPullRequestAverageTime),
+        DateTimeUtils.getTotalHours(mediumPullRequestAverageTime),
+        DateTimeUtils.getTotalHours(largePullRequestAverageTime)
+      ]
+    };
+  }
 
   buildAverageTimeText(totalMiliseconds) {
     const totalDaysHoursMinutes = DateTimeUtils.getTotalDaysHoursMinutes(
@@ -48,6 +68,15 @@ class App extends Component {
           <div className="row thin-shadow mb-4 bg-white">
             <div className="col-md-12">
               <RepoSearch onDataFetched={this.handleDataFetched} />
+            </div>
+          </div>
+
+          <div className="row ml-2 mr-2 mb-4">
+            <div className="col-12">
+              <BarChartCard
+                chartData={this.state.organizedPullRequestData}
+                titleText={"Average Merge Time by Pull Request Size"}
+              />
             </div>
           </div>
 
