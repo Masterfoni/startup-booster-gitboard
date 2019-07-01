@@ -1,11 +1,11 @@
 import React, { Component } from "react";
-import "./App.css";
-import RepoSearch from "../repo-search/RepoSearch";
-import TextCard from "../text-card/TextCard";
+import "./Dashboard.css";
 import DateTimeUtils from "../../utils/date-time-utils";
-import BarChartCard from "../bar-chart-card/BarChartCard";
+import RepoSearch from "../../components/repo-search/RepoSearch";
+import BarChartCard from "../../components/bar-chart-card/BarChartCard";
+import TextCard from "../../components/text-card/TextCard";
 
-class App extends Component {
+class Dashboard extends Component {
   constructor(props) {
     super(props);
 
@@ -108,4 +108,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default Dashboard;
