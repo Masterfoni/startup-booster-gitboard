@@ -21,3 +21,18 @@ code {
   -o-transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
+.sidenav {
+  width: 4em;
+  height: 100%;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #30313f;
+  overflow-x: hidden;
+  padding-top: 1.5em;
+}
+
+#root {
+  margin-left: 4em;
+}
