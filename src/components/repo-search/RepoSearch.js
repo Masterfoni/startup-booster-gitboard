@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import "./RepoSearch.css";
 import RequestHelper from "../../utils/request-helper";
 import DateTimeUtils from "../../utils/date-time-utils";
+import PullRequestData from "../../domain/pull-request-data";
 
 class RepoSearch extends Component {
   constructor(props) {
@@ -9,15 +10,11 @@ class RepoSearch extends Component {
 
     this.state = {
       ownerValue: "",
-      repoValue: "",
-      smallPullRequests: [],
-      mediumPullRequests: [],
-      largePullRequests: []
+      repoValue: ""
     };
 
     this.handleOwnerChange = this.handleOwnerChange.bind(this);
     this.handleRepoChange = this.handleRepoChange.bind(this);
-
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
@@ -85,10 +82,11 @@ class RepoSearch extends Component {
               ),
               averageIssueCloseTime: this.calculateAverageIssueCloseTime(
                 issueList
+              ),
+              organizedPullRequestData: this.organizePullRequestData(
+                pullRequestList
               )
             });
-
-            this.organizePullRequestsBySize(pullRequestList);
           }
         },
         error => {
@@ -99,55 +97,59 @@ class RepoSearch extends Component {
     }
   };
 
-  organizePullRequestsBySize(pullRequests) {
-    this.setState({
-      smallPullRequests: [],
-      mediumPullRequests: [],
-      largePullRequests: []
-    });
+  organizePullRequestData(pullRequests) {
+    const smallPullRequestsData = new PullRequestData(0, 0);
+    const mediumPullRequestsData = new PullRequestData(0, 0);
+    const largePullRequestsData = new PullRequestData(0, 0);
 
     pullRequests.forEach(pullRequest => {
       let totalModifications = pullRequest.additions + pullRequest.deletions;
 
       if (totalModifications <= 100) {
-        this.setState({
-          smallPullRequests: this.state.smallPullRequests.concat([pullRequest])
-        });
+        smallPullRequestsData.totalCount++;
+        smallPullRequestsData.totalTime += Math.abs(
+          new Date(pullRequest.mergedAt).getTime() -
+            new Date(pullRequest.createdAt).getTime()
+        );
       } else if (totalModifications <= 1000) {
-        this.setState({
-          mediumPullRequests: this.state.mediumPullRequests.concat([
-            pullRequest
-          ])
-        });
+        mediumPullRequestsData.totalCount++;
+        mediumPullRequestsData.totalTime += Math.abs(
+          new Date(pullRequest.mergedAt).getTime() -
+            new Date(pullRequest.createdAt).getTime()
+        );
       } else {
-        this.setState({
-          largePullRequests: this.state.largePullRequests.concat([pullRequest])
-        });
+        largePullRequestsData.totalCount++;
+        largePullRequestsData.totalTime += Math.abs(
+          new Date(pullRequest.mergedAt).getTime() -
+            new Date(pullRequest.createdAt).getTime()
+        );
       }
     });
 
-    console.log("Small PR`s organized: ", this.state.smallPullRequests);
-    console.log("Medium PR`s organized: ", this.state.mediumPullRequests);
-    console.log("Large PR`s organized: ", this.state.largePullRequests);
+    return {
+      smallPullRequestsData,
+      mediumPullRequestsData,
+      largePullRequestsData
+    };
   }
 
   calculateAveragePullRequestMergeTime(pullRequests) {
-    let averageTime = 0;
+    const pullRequestData = new PullRequestData(0, 0);
 
     if (pullRequests.length > 0) {
-      averageTime =
-        pullRequests.reduce(
-          (previousTime, pullRequest) =>
-            previousTime +
-            Math.abs(
-              new Date(pullRequest.mergedAt).getTime() -
-                new Date(pullRequest.createdAt).getTime()
-            ),
-          0
-        ) / pullRequests.length;
+      pullRequestData.totalCount = pullRequests.length;
+      pullRequestData.totalTime = pullRequests.reduce(
+        (previousTime, pullRequest) =>
+          previousTime +
+          Math.abs(
+            new Date(pullRequest.mergedAt).getTime() -
+              new Date(pullRequest.createdAt).getTime()
+          ),
+        0
+      );
     }
 
-    return averageTime;
+    return pullRequestData.getAverageTime();
   }
 
   calculateAverageIssueCloseTime(issues) {
