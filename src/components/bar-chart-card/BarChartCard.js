@@ -57,7 +57,10 @@ class BarChartCard extends Component {
           yAxes: [
             {
               ticks: {
-                beginAtZero: true
+                beginAtZero: true,
+                callback: function(value, index, values) {
+                  return value + "h";
+                }
               }
             }
           ]
@@ -67,7 +70,7 @@ class BarChartCard extends Component {
   }
 
   componentDidUpdate() {
-    if (this.props.chartData != null) {
+    if (this.props.chartData) {
       this.buildChart();
     }
   }
@@ -80,7 +83,11 @@ class BarChartCard extends Component {
         </div>
         <div className="bar-chart-card-body">
           <div>
-            <canvas id="defBarChart" />
+            {this.props.chartData ? (
+              <canvas id="defBarChart" />
+            ) : (
+              "No data to display"
+            )}
           </div>
         </div>
       </div>
