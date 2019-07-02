@@ -4,6 +4,7 @@ import DateTimeUtils from "../../utils/date-time-utils";
 import RepoSearch from "../../components/repo-search/RepoSearch";
 import BarChartCard from "../../components/bar-chart-card/BarChartCard";
 import TextCard from "../../components/text-card/TextCard";
+import LineChartCard from "../../components/line-chart-card/LineChartCard";
 
 class Dashboard extends Component {
   constructor(props) {
@@ -100,6 +101,12 @@ class Dashboard extends Component {
                 titleText={"Average Issue Close Time"}
                 bodyText={this.state.averageCloseTimeText}
               />
+            </div>
+          </div>
+
+          <div className="row ml-2 mr-2 mb-4">
+            <div className="col-12">
+              <LineChartCard titleText={"Month Summary"} />
             </div>
           </div>
         </div>
