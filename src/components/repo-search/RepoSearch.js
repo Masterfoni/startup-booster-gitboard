@@ -39,17 +39,35 @@ class RepoSearch extends Component {
       const LAST_MONTH_QUALIFIER = `filterBy: { since: "${DateTimeUtils.getLastMonth()}" }`;
       const QUANTITY_QUALIFIER = `last: 100`;
 
-      const PULL_REQUEST_STATE_QUALIFIER = `states: MERGED`;
+      const PULL_REQUEST_MERGED_STATE_QUALIFIER = `states: MERGED`;
+      const PULL_REQUEST_OPEN_STATE_QUALIFIER = `states: OPEN`;
+      const PULL_REQUEST_CLOSED_STATE_QUALIFIER = `states: CLOSED`;
 
       const GET_REPO = `{
         repository(${ONWER_QUALIFIER}, ${NAME_QUALIFIER}) {
-          pullRequests(${PULL_REQUEST_STATE_QUALIFIER}, ${QUANTITY_QUALIFIER}) {
+          mergedPullRequests: pullRequests(${PULL_REQUEST_MERGED_STATE_QUALIFIER}, ${QUANTITY_QUALIFIER}) {
             edges {
               node {
                 createdAt
                 mergedAt
                 additions
                 deletions
+              }
+            }
+            totalCount
+          }
+          openPullRequests: pullRequests(${PULL_REQUEST_OPEN_STATE_QUALIFIER}, ${QUANTITY_QUALIFIER}) {
+            edges {
+              node {
+                createdAt
+              }
+            }
+            totalCount
+          }
+          closedPullRequests: pullRequests(${PULL_REQUEST_CLOSED_STATE_QUALIFIER}, ${QUANTITY_QUALIFIER}) {
+            edges {
+              node {
+                closedAt
               }
             }
             totalCount
@@ -172,7 +190,7 @@ class RepoSearch extends Component {
   }
 
   getPullRequestList(queryResult) {
-    return queryResult.data.data.repository.pullRequests.edges.map(
+    return queryResult.data.data.repository.mergedPullRequests.edges.map(
       edge => edge.node
     );
   }
