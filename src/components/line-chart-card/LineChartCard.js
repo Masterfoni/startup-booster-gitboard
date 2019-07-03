@@ -23,15 +23,15 @@ class LineChartCard extends Component {
           {
             data: self.props.chartData.map(dayInfo => dayInfo.totalOpen),
             label: "Opened",
-            borderColor: "green",
-            pointBackgroundColor: "green",
+            borderColor: "red",
+            pointBackgroundColor: "red",
             fill: false
           },
           {
             data: self.props.chartData.map(dayInfo => dayInfo.totalClosed),
             label: "Closed",
-            borderColor: "red",
-            pointBackgroundColor: "red",
+            borderColor: "green",
+            pointBackgroundColor: "green",
             fill: false
           }
         ]
@@ -55,9 +55,17 @@ class LineChartCard extends Component {
           shadowColor: "rgba(0, 0, 0, 0.3)",
           callbacks: {
             label: function(tooltipItem, data) {
-              console.log("boa noite", tooltipItem);
-              console.log("boa noite", data);
-              return "Average Time      " + tooltipItem.value + "h";
+              let builtLabel = "";
+
+              if (tooltipItem.datasetIndex === 0) {
+                builtLabel += "Merged    ";
+              } else if (tooltipItem.datasetIndex === 1) {
+                builtLabel += "Opened    ";
+              } else if (tooltipItem.datasetIndex === 2) {
+                builtLabel += "Closed    ";
+              }
+
+              return builtLabel + tooltipItem.value;
             },
             title: function() {
               return "Pull Requests";
@@ -121,7 +129,7 @@ class LineChartCard extends Component {
                   <div id="chartjsLegend" className="chartjsLegend table" />
                 </>
               ) : (
-                "No data to display"
+                <div className="no-data">No data to display</div>
               )}
             </div>
           </div>

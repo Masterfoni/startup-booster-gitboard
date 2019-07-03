@@ -83,3 +83,7 @@
   cursor: pointer;
   background-color: rgba(224, 223, 223, 0.3);
 }
+
+.no-data {
+  font-size: 3.5em;
+}
