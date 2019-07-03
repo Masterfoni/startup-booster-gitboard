@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import "./LineChartCard.css";
+import "./MonthSummary.css";
 import Chart from "chart.js";
 import "chartjs-plugin-style";
 
-class LineChartCard extends Component {
+class MonthSummary extends Component {
   buildChart() {
     let context = document.getElementById("defLineChart").getContext("2d");
     const self = this;
@@ -139,4 +139,4 @@ class LineChartCard extends Component {
   }
 }
 
-export default LineChartCard;
+export default MonthSummary;

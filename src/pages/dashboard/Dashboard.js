@@ -4,7 +4,7 @@ import DateTimeUtils from "../../utils/date-time-utils";
 import RepoSearch from "../../components/repo-search/RepoSearch";
 import BarChartCard from "../../components/bar-chart-card/BarChartCard";
 import TextCard from "../../components/text-card/TextCard";
-import LineChartCard from "../../components/line-chart-card/LineChartCard";
+import MonthSummary from "../../components/month-summary/MonthSummary";
 
 class Dashboard extends Component {
   constructor(props) {
@@ -108,7 +108,7 @@ class Dashboard extends Component {
 
           <div className="row ml-2 mr-2 mb-4">
             <div className="col-12">
-              <LineChartCard
+              <MonthSummary
                 chartData={this.state.monthSummaryData}
                 titleText={"Month Summary"}
               />
