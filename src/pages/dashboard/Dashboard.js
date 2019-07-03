@@ -16,9 +16,16 @@ class Dashboard extends Component {
       averageMergeTimeText: null,
       averageCloseTimeText: null,
       organizedPullRequestData: null,
-      monthSummaryData: null
+      monthSummaryData: null,
+      isLoading: false
     };
   }
+
+  handleToggleLoading = isLoading => {
+    this.setState({
+      isLoading: isLoading
+    });
+  };
 
   handleDataFetched = gitHubData => {
     console.log("Data fetched!", gitHubData);
@@ -80,7 +87,10 @@ class Dashboard extends Component {
         <div className="container-fluid bg-light">
           <div className="row thin-shadow mb-4 bg-white">
             <div className="col-md-12">
-              <RepoSearch onDataFetched={this.handleDataFetched} />
+              <RepoSearch
+                onDataFetched={this.handleDataFetched}
+                onToggleLoading={this.handleToggleLoading}
+              />
             </div>
           </div>
 
@@ -89,6 +99,7 @@ class Dashboard extends Component {
               <AverageMergeTime
                 chartData={this.state.organizedPullRequestData}
                 titleText={"Average Merge Time by Pull Request Size"}
+                isLoading={this.state.isLoading}
               />
             </div>
           </div>
@@ -98,6 +109,7 @@ class Dashboard extends Component {
               <TextCard
                 titleText={"Average Pull Request Merge Time"}
                 bodyText={this.state.averageMergeTimeText}
+                isLoading={this.state.isLoading}
               />
             </div>
 
@@ -105,6 +117,7 @@ class Dashboard extends Component {
               <TextCard
                 titleText={"Average Issue Close Time"}
                 bodyText={this.state.averageCloseTimeText}
+                isLoading={this.state.isLoading}
               />
             </div>
           </div>
@@ -114,6 +127,7 @@ class Dashboard extends Component {
               <MonthSummary
                 chartData={this.state.monthSummaryData}
                 titleText={"Month Summary"}
+                isLoading={this.state.isLoading}
               />
             </div>
           </div>

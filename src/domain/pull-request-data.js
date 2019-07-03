@@ -12,7 +12,7 @@ class PullRequestData {
     const parsedTime = parseFloat(totalTime);
 
     if (Number.isNaN(parsedTime)) {
-      // throw new Error()...
+      throw new Error("Total time accepts only numbers!");
     }
 
     this._totalTime = parsedTime;
@@ -26,7 +26,7 @@ class PullRequestData {
     const parsedCount = parseFloat(totalCount);
 
     if (Number.isNaN(parsedCount)) {
-      // throw new Error()...
+      throw new Error("Total count accepts only numbers!");
     }
 
     this._totalCount = parsedCount;

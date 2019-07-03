@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import "./AverageMergeTime.css";
 import Chart from "chart.js";
+import Loader from "../loader/Loader";
 
 class AverageMergeTime extends Component {
   buildChart() {
@@ -81,21 +82,27 @@ class AverageMergeTime extends Component {
     }
   }
 
+  checkLoading() {
+    return this.props.isLoading ? (
+      <Loader />
+    ) : (
+      <div>
+        {this.props.chartData ? (
+          <canvas id="defBarChart" />
+        ) : (
+          "No data to display"
+        )}
+      </div>
+    );
+  }
+
   render() {
     return (
       <div className="thin-shadow bg-white">
         <div className="bar-chart-card-head">
           {this.props.titleText ? this.props.titleText : "No data to display"}
         </div>
-        <div className="bar-chart-card-body">
-          <div>
-            {this.props.chartData ? (
-              <canvas id="defBarChart" />
-            ) : (
-              "No data to display"
-            )}
-          </div>
-        </div>
+        <div className="bar-chart-card-body">{this.checkLoading()}</div>
       </div>
     );
   }

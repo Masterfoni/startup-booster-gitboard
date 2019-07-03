@@ -1,13 +1,13 @@
 import React, { Component } from "react";
 import "./MonthSummary.css";
 import Chart from "chart.js";
+import Loader from "../loader/Loader";
 
 class MonthSummary extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      isLoading: false,
       pullRequestMode: true
     };
   }
@@ -202,7 +202,9 @@ class MonthSummary extends Component {
   }
 
   componentDidUpdate() {
-    this.buildChart();
+    if (this.props.chartData) {
+      this.buildChart();
+    }
   }
 
   getTotalPullRequestsCount() {
@@ -216,54 +218,62 @@ class MonthSummary extends Component {
     );
   }
 
+  checkLoading() {
+    return this.props.isLoading ? (
+      <Loader />
+    ) : (
+      <>
+        {this.props.chartData ? (
+          <>
+            <div className="row mb-4 text-left pl-4">
+              <div
+                onClick={() => this.setState({ pullRequestMode: true })}
+                className={
+                  "col-2 selector " +
+                  (this.state.pullRequestMode ? "active" : "inactive")
+                }
+              >
+                <span className="selector-title">Pull Requests</span>
+                <br />
+                <span className="selector-quantity">
+                  {this.getTotalPullRequestsCount()}
+                </span>
+              </div>
+              <div
+                onClick={() => this.setState({ pullRequestMode: false })}
+                className={
+                  "col-2 selector " +
+                  (this.state.pullRequestMode ? "inactive" : "active")
+                }
+              >
+                <span className="selector-title">Issues</span>
+                <br />
+                <span className="selector-quantity">60</span>
+              </div>
+            </div>
+          </>
+        ) : null}
+
+        <div className="row pl-4">
+          <div className="col-12">
+            {this.props.chartData ? (
+              <canvas id="defLineChart" />
+            ) : (
+              <div className="no-data">No data to display</div>
+            )}
+          </div>
+        </div>
+      </>
+    );
+  }
+
   render() {
     return (
       <div className="thin-shadow bg-white">
         <div className="line-chart-card-head">
           {this.props.titleText ? this.props.titleText : "No data to display"}
         </div>
-        <div className="line-chart-card-body">
-          {this.props.chartData ? (
-            <>
-              <div className="row mb-4 text-left pl-4">
-                <div
-                  onClick={() => this.setState({ pullRequestMode: true })}
-                  className={
-                    "col-2 selector " +
-                    (this.state.pullRequestMode ? "active" : "inactive")
-                  }
-                >
-                  <span className="selector-title">Pull Requests</span>
-                  <br />
-                  <span className="selector-quantity">
-                    {this.getTotalPullRequestsCount()}
-                  </span>
-                </div>
-                <div
-                  onClick={() => this.setState({ pullRequestMode: false })}
-                  className={
-                    "col-2 selector " +
-                    (this.state.pullRequestMode ? "inactive" : "active")
-                  }
-                >
-                  <span className="selector-title">Issues</span>
-                  <br />
-                  <span className="selector-quantity">60</span>
-                </div>
-              </div>
-            </>
-          ) : null}
-
-          <div className="row pl-4">
-            <div className="col-12">
-              {this.props.chartData ? (
-                <canvas id="defLineChart" />
-              ) : (
-                <div className="no-data">No data to display</div>
-              )}
-            </div>
-          </div>
-        </div>
+        <div className="line-chart-card-body">{this.checkLoading()}</div>
       </div>
     );
   }

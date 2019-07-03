@@ -1,13 +1,16 @@
 import React, { Component } from "react";
 import "./TextCard.css";
+import Loader from "../loader/Loader";
 
 class TextCard extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      isLoading: false
-    };
+  checkLoading() {
+    return this.props.isLoading ? (
+      <Loader />
+    ) : (
+      <div>
+        {this.props.bodyText ? this.props.bodyText : "No data to display"}
+      </div>
+    );
   }
 
   render() {
@@ -18,11 +21,7 @@ class TextCard extends Component {
             {this.props.titleText ? this.props.titleText : "No data to display"}
           </span>
         </div>
-        <div className="text-card-body">
-          <div>
-            {this.props.bodyText ? this.props.bodyText : "No data to display"}
-          </div>
-        </div>
+        <div className="text-card-body">{this.checkLoading()}</div>
       </div>
     );
   }

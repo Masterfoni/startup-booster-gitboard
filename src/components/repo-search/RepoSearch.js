@@ -11,7 +11,8 @@ class RepoSearch extends Component {
 
     this.state = {
       ownerValue: "",
-      repoValue: ""
+      repoValue: "",
+      isLoading: false
     };
 
     this.handleOwnerChange = this.handleOwnerChange.bind(this);
@@ -26,6 +27,10 @@ class RepoSearch extends Component {
 
   handleDataFetched = gitHubData => {
     this.props.onDataFetched(gitHubData);
+  };
+
+  handleToggleLoading = isLoading => {
+    this.props.onToggleLoading(isLoading);
   };
 
   handleSubmit = event => {
@@ -95,8 +100,12 @@ class RepoSearch extends Component {
         }
       }`;
 
+      this.handleToggleLoading(true);
+
       RequestHelper.sendRequest(GET_REPO).then(
         result => {
+          this.handleToggleLoading(false);
+
           var errorMessages = this.getErrorMessages(result);
           if (errorMessages.length > 0) {
             alert(errorMessages);
