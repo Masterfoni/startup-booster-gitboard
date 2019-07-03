@@ -65,74 +65,77 @@ class AverageMergeTime extends Component {
   }
 
   buildChart(chartData) {
-    let context = document.getElementById("defBarChart").getContext("2d");
+    const chartElement = document.getElementById("defBarChart");
+    if (chartElement) {
+      let context = chartElement.getContext("2d");
 
-    new Chart(context, {
-      type: "bar",
-      data: {
-        labels: chartData.labels,
-        datasets: [
-          {
-            data: chartData.data.totalHours,
-            backgroundColor: [
-              "rgba(54, 162, 235)",
-              "rgba(54, 162, 235)",
-              "rgba(54, 162, 235)"
-            ],
-            borderColor: [
-              "rgba(54, 162, 235, 1)",
-              "rgba(54, 162, 235, 1)",
-              "rgba(54, 162, 235, 1)"
-            ],
-            borderWidth: 1
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        tooltips: {
-          bodySpacing: 10,
-          bodyFontSize: 14,
-          bodyFontColor: "rgba(0, 0, 0, 1)",
-          titleFontSize: 0,
-          titleFontColor: "rgba(0, 0, 0, 1)",
-          backgroundColor: "rgba(255, 255, 255, 1)",
-          xPadding: 15,
-          yPadding: 15,
-          displayColors: false,
-          shadowOffsetX: 0,
-          shadowOffsetY: 0,
-          shadowBlur: 5,
-          shadowColor: "rgba(0, 0, 0, 0.3)",
-          callbacks: {
-            label: function(tooltipItem) {
-              return "Average Time      " + tooltipItem.value + "h";
-            },
-            afterLabel: function(tooltipItem) {
-              return (
-                "Pull Requests      " +
-                chartData.data.totalCounts[tooltipItem.index]
-              );
-            }
-          }
-        },
-        legend: {
-          display: false
-        },
-        scales: {
-          yAxes: [
+      new Chart(context, {
+        type: "bar",
+        data: {
+          labels: chartData.labels,
+          datasets: [
             {
-              ticks: {
-                beginAtZero: true,
-                callback: function(value) {
-                  return value + "h";
-                }
-              }
+              data: chartData.data.totalHours,
+              backgroundColor: [
+                "rgba(54, 162, 235)",
+                "rgba(54, 162, 235)",
+                "rgba(54, 162, 235)"
+              ],
+              borderColor: [
+                "rgba(54, 162, 235, 1)",
+                "rgba(54, 162, 235, 1)",
+                "rgba(54, 162, 235, 1)"
+              ],
+              borderWidth: 1
             }
           ]
+        },
+        options: {
+          responsive: true,
+          tooltips: {
+            bodySpacing: 10,
+            bodyFontSize: 14,
+            bodyFontColor: "rgba(0, 0, 0, 1)",
+            titleFontSize: 0,
+            titleFontColor: "rgba(0, 0, 0, 1)",
+            backgroundColor: "rgba(255, 255, 255, 1)",
+            xPadding: 15,
+            yPadding: 15,
+            displayColors: false,
+            shadowOffsetX: 0,
+            shadowOffsetY: 0,
+            shadowBlur: 5,
+            shadowColor: "rgba(0, 0, 0, 0.3)",
+            callbacks: {
+              label: function(tooltipItem) {
+                return "Average Time      " + tooltipItem.value + "h";
+              },
+              afterLabel: function(tooltipItem) {
+                return (
+                  "Pull Requests      " +
+                  chartData.data.totalCounts[tooltipItem.index]
+                );
+              }
+            }
+          },
+          legend: {
+            display: false
+          },
+          scales: {
+            yAxes: [
+              {
+                ticks: {
+                  beginAtZero: true,
+                  callback: function(value) {
+                    return value + "h";
+                  }
+                }
+              }
+            ]
+          }
         }
-      }
-    });
+      });
+    }
   }
 
   componentDidUpdate() {

@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import "./RepoSearch.css";
 import RequestHelper from "../../utils/request-helper";
 import DateTimeUtils from "../../utils/date-time-utils";
-import moment from "moment";
 
 class RepoSearch extends Component {
   constructor(props) {
@@ -131,13 +130,20 @@ class RepoSearch extends Component {
               averageIssueCloseTime: this.calculateAverageIssueCloseTime(
                 closedIssueList
               ),
-              monthSummaryData: this.getMonthSummaryData(
+              monthSummaryData: {
                 mergedPullRequestList,
                 openPullRequestList,
                 closedPullRequestList,
                 openIssueList,
                 closedIssueList
-              )
+              }
+              // this.getMonthSummaryData(
+              //   mergedPullRequestList,
+              //   openPullRequestList,
+              //   closedPullRequestList,
+              //   openIssueList,
+              //   closedIssueList
+              // )
             });
           }
         },
@@ -148,61 +154,6 @@ class RepoSearch extends Component {
       );
     }
   };
-
-  getMonthSummaryData(
-    mergedPullRequestList,
-    openPullRequestList,
-    closedPullRequestList,
-    openIssueList,
-    closedIssueList
-  ) {
-    var monthSummaryData = [];
-
-    for (let i = 30; i >= 0; i--) {
-      monthSummaryData.push({
-        day: moment()
-          .subtract(i, "days")
-          .format("DD MMM"),
-        totalPullRequestsMerged: 0,
-        totalPullRequestsOpen: 0,
-        totalPullRequestsClosed: 0,
-        totalIssuesOpened: 0,
-        totalIssuesClosed: 0
-      });
-    }
-
-    monthSummaryData.forEach(dayData => {
-      dayData.totalIssuesClosed = closedIssueList.filter(
-        issue =>
-          dayData.day === moment(new Date(issue.closedAt)).format("DD MMM")
-      ).length;
-
-      dayData.totalIssuesOpened = openIssueList.filter(
-        issue =>
-          dayData.day === moment(new Date(issue.createdAt)).format("DD MMM")
-      ).length;
-
-      dayData.totalPullRequestsMerged = mergedPullRequestList.filter(
-        pullRequest =>
-          dayData.day ===
-          moment(new Date(pullRequest.mergedAt)).format("DD MMM")
-      ).length;
-
-      dayData.totalPullRequestsOpen = openPullRequestList.filter(
-        pullRequest =>
-          dayData.day ===
-          moment(new Date(pullRequest.createdAt)).format("DD MMM")
-      ).length;
-
-      dayData.totalPullRequestsClosed = closedPullRequestList.filter(
-        pullRequest =>
-          dayData.day ===
-          moment(new Date(pullRequest.closedAt)).format("DD MMM")
-      ).length;
-    });
-
-    return monthSummaryData;
-  }
 
   calculateAverageIssueCloseTime(issues) {
     let averageTime = 0;

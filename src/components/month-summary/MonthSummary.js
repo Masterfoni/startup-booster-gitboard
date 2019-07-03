@@ -2,40 +2,98 @@ import React, { Component } from "react";
 import "./MonthSummary.css";
 import Chart from "chart.js";
 import Loader from "../loader/Loader";
+import moment from "moment";
 
 class MonthSummary extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      pullRequestMode: true
+      pullRequestMode: true,
+      monthSummaryData: null
     };
   }
 
-  buildChart() {
-    let context = document.getElementById("defLineChart").getContext("2d");
-    let builtChart;
+  buildChart(monthSummaryStatistics) {
+    const chartElement = document.getElementById("defLineChart");
 
-    builtChart = new Chart(
-      context,
-      this.state.pullRequestMode
-        ? this.getPullRequestModeOptions()
-        : this.getIssueModeOptions()
-    );
+    if (chartElement) {
+      let context = chartElement.getContext("2d");
 
-    return builtChart;
+      new Chart(
+        context,
+        this.state.pullRequestMode
+          ? this.getPullRequestModeOptions(monthSummaryStatistics)
+          : this.getIssueModeOptions(monthSummaryStatistics)
+      );
+    }
   }
 
-  getIssueModeOptions() {
-    const self = this;
+  getMonthSummaryStatistics() {
+    const mergedPullRequestList = this.props.monthSummaryData
+      .mergedPullRequestList;
+    const openPullRequestList = this.props.monthSummaryData.openPullRequestList;
+    const closedPullRequestList = this.props.monthSummaryData
+      .closedPullRequestList;
+    const openIssueList = this.props.monthSummaryData.openIssueList;
+    const closedIssueList = this.props.monthSummaryData.closedIssueList;
 
+    var monthSummaryStatistics = [];
+
+    for (let i = 30; i >= 0; i--) {
+      monthSummaryStatistics.push({
+        day: moment()
+          .subtract(i, "days")
+          .format("DD MMM"),
+        totalPullRequestsMerged: 0,
+        totalPullRequestsOpen: 0,
+        totalPullRequestsClosed: 0,
+        totalIssuesOpened: 0,
+        totalIssuesClosed: 0
+      });
+    }
+
+    monthSummaryStatistics.forEach(dayData => {
+      dayData.totalIssuesClosed = closedIssueList.filter(
+        issue =>
+          dayData.day === moment(new Date(issue.closedAt)).format("DD MMM")
+      ).length;
+
+      dayData.totalIssuesOpened = openIssueList.filter(
+        issue =>
+          dayData.day === moment(new Date(issue.createdAt)).format("DD MMM")
+      ).length;
+
+      dayData.totalPullRequestsMerged = mergedPullRequestList.filter(
+        pullRequest =>
+          dayData.day ===
+          moment(new Date(pullRequest.mergedAt)).format("DD MMM")
+      ).length;
+
+      dayData.totalPullRequestsOpen = openPullRequestList.filter(
+        pullRequest =>
+          dayData.day ===
+          moment(new Date(pullRequest.createdAt)).format("DD MMM")
+      ).length;
+
+      dayData.totalPullRequestsClosed = closedPullRequestList.filter(
+        pullRequest =>
+          dayData.day ===
+          moment(new Date(pullRequest.closedAt)).format("DD MMM")
+      ).length;
+    });
+
+    return monthSummaryStatistics;
+  }
+
+  getIssueModeOptions(monthSummaryStatistics) {
     return {
       type: "line",
       data: {
-        labels: self.props.chartData.map(dayInfo => dayInfo.day),
+        labels: monthSummaryStatistics.map(dayInfo => dayInfo.day),
         datasets: [
           {
-            data: self.props.chartData.map(
+            data: monthSummaryStatistics.map(
               dayInfo => dayInfo.totalIssuesOpened
             ),
             label: "Opened",
@@ -44,7 +102,7 @@ class MonthSummary extends Component {
             fill: false
           },
           {
-            data: self.props.chartData.map(
+            data: monthSummaryStatistics.map(
               dayInfo => dayInfo.totalIssuesClosed
             ),
             label: "Closed",
@@ -105,16 +163,14 @@ class MonthSummary extends Component {
     };
   }
 
-  getPullRequestModeOptions() {
-    const self = this;
-
+  getPullRequestModeOptions(monthSummaryStatistics) {
     return {
       type: "line",
       data: {
-        labels: self.props.chartData.map(dayInfo => dayInfo.day),
+        labels: monthSummaryStatistics.map(dayInfo => dayInfo.day),
         datasets: [
           {
-            data: self.props.chartData.map(
+            data: monthSummaryStatistics.map(
               dayInfo => dayInfo.totalPullRequestsMerged
             ),
             label: "Merged",
@@ -123,7 +179,7 @@ class MonthSummary extends Component {
             fill: false
           },
           {
-            data: self.props.chartData.map(
+            data: monthSummaryStatistics.map(
               dayInfo => dayInfo.totalPullRequestsOpen
             ),
             label: "Opened",
@@ -132,7 +188,7 @@ class MonthSummary extends Component {
             fill: false
           },
           {
-            data: self.props.chartData.map(
+            data: monthSummaryStatistics.map(
               dayInfo => dayInfo.totalPullRequestsClosed
             ),
             label: "Closed",
@@ -160,7 +216,7 @@ class MonthSummary extends Component {
           shadowBlur: 5,
           shadowColor: "rgba(0, 0, 0, 0.3)",
           callbacks: {
-            label: function(tooltipItem, data) {
+            label: function(tooltipItem) {
               let builtLabel = "";
 
               if (tooltipItem.datasetIndex === 0) {
@@ -201,14 +257,8 @@ class MonthSummary extends Component {
     });
   }
 
-  componentDidUpdate() {
-    if (this.props.chartData) {
-      this.buildChart();
-    }
-  }
-
   getTotalPullRequestsCount() {
-    return this.props.chartData.reduce(
+    return this.getMonthSummaryStatistics().reduce(
       (previousTotal, dayInfo) =>
         previousTotal +
         dayInfo.totalPullRequestsMerged +
@@ -223,7 +273,7 @@ class MonthSummary extends Component {
       <Loader />
     ) : (
       <>
-        {this.props.chartData ? (
+        {this.props.monthSummaryData ? (
           <>
             <div className="row mb-4 text-left pl-4">
               <div
@@ -256,7 +306,7 @@ class MonthSummary extends Component {
 
         <div className="row pl-4">
           <div className="col-12">
-            {this.props.chartData ? (
+            {this.props.monthSummaryData ? (
               <canvas id="defLineChart" />
             ) : (
               <div className="no-data">No data to display</div>
@@ -265,6 +315,13 @@ class MonthSummary extends Component {
         </div>
       </>
     );
+  }
+
+  componentDidUpdate() {
+    if (this.props.monthSummaryData) {
+      var monthSummaryStatistics = this.getMonthSummaryStatistics();
+      this.buildChart(monthSummaryStatistics);
+    }
   }
 
   render() {

@@ -100,7 +100,7 @@ class Dashboard extends Component {
           <div className="row ml-2 mr-2 mb-4">
             <div className="col-12">
               <MonthSummary
-                chartData={this.state.monthSummaryData}
+                monthSummaryData={this.state.monthSummaryData}
                 titleText={"Month Summary"}
                 isLoading={this.state.isLoading}
               />
