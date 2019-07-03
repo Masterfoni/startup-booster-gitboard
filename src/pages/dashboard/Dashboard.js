@@ -3,18 +3,18 @@ import "./Dashboard.css";
 import DateTimeUtils from "../../utils/date-time-utils";
 import RepoSearch from "../../components/repo-search/RepoSearch";
 import AverageMergeTime from "../../components/average-merge-time/AverageMergeTime";
-import TextCard from "../../components/text-card/TextCard";
 import MonthSummary from "../../components/month-summary/MonthSummary";
 import "chartjs-plugin-style";
 import Sidenav from "../../components/sidenav/Sidenav";
+import TimeTextCard from "../../components/time-text-card/TimeTextCard";
 
 class Dashboard extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      averageMergeTimeText: null,
-      averageCloseTimeText: null,
+      averagePullRequestMergeTime: null,
+      averageIssueCloseTime: null,
       organizedPullRequestData: null,
       monthSummaryData: null,
       isLoading: false
@@ -30,12 +30,8 @@ class Dashboard extends Component {
   handleDataFetched = gitHubData => {
     console.log("Data fetched!", gitHubData);
     this.setState({
-      averageMergeTimeText: this.buildAverageTimeText(
-        gitHubData.averagePullRequestMergeTime
-      ),
-      averageCloseTimeText: this.buildAverageTimeText(
-        gitHubData.averageIssueCloseTime
-      ),
+      averagePullRequestMergeTime: gitHubData.averagePullRequestMergeTime,
+      averageIssueCloseTime: gitHubData.averageIssueCloseTime,
       organizedPullRequestData: this.buildBarChartData(
         gitHubData.organizedPullRequestData
       ),
@@ -65,21 +61,6 @@ class Dashboard extends Component {
     };
   }
 
-  buildAverageTimeText(totalMiliseconds) {
-    const totalDaysHoursMinutes = DateTimeUtils.getTotalDaysHoursMinutes(
-      totalMiliseconds
-    );
-
-    return (
-      totalDaysHoursMinutes.days +
-      "days " +
-      totalDaysHoursMinutes.hours +
-      "h" +
-      totalDaysHoursMinutes.minutes +
-      "m"
-    );
-  }
-
   render() {
     return (
       <>
@@ -106,17 +87,17 @@ class Dashboard extends Component {
 
           <div className="row ml-2 mr-2 mb-4">
             <div className="col-sm-12 col-md-6">
-              <TextCard
+              <TimeTextCard
                 titleText={"Average Pull Request Merge Time"}
-                bodyText={this.state.averageMergeTimeText}
+                time={this.state.averagePullRequestMergeTime}
                 isLoading={this.state.isLoading}
               />
             </div>
 
             <div className="col-sm-12 col-md-6">
-              <TextCard
+              <TimeTextCard
                 titleText={"Average Issue Close Time"}
-                bodyText={this.state.averageCloseTimeText}
+                time={this.state.averageIssueCloseTime}
                 isLoading={this.state.isLoading}
               />
             </div>
