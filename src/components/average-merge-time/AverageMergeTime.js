@@ -163,7 +163,7 @@ class AverageMergeTime extends Component {
 
   render() {
     return (
-      <div className="thin-shadow bg-white">
+      <div className="thin-shadow bg-white rounded">
         <div className="bar-chart-card-head">
           {this.props.titleText ? this.props.titleText : "No data to display"}
         </div>

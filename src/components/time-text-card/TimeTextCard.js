@@ -36,7 +36,7 @@ class TimeTextCard extends Component {
 
   render() {
     return (
-      <div className="thin-shadow bg-white">
+      <div className="thin-shadow bg-white rounded">
         <div className="text-card-head">
           <span className="text-head">
             {this.props.titleText ? this.props.titleText : "No data to display"}
