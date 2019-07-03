@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import "./RepoSearch.css";
 import RequestHelper from "../../utils/request-helper";
 import DateTimeUtils from "../../utils/date-time-utils";
+import PullRequestData from "../../domain/pull-request-data";
 
 class RepoSearch extends Component {
   constructor(props) {
@@ -130,6 +131,9 @@ class RepoSearch extends Component {
               averageIssueCloseTime: this.calculateAverageIssueCloseTime(
                 closedIssueList
               ),
+              averagePullRequestMergeTime: this.calculateAveragePullRequestMergeTime(
+                mergedPullRequestList
+              ),
               monthSummaryData: {
                 mergedPullRequestList,
                 openPullRequestList,
@@ -137,13 +141,6 @@ class RepoSearch extends Component {
                 openIssueList,
                 closedIssueList
               }
-              // this.getMonthSummaryData(
-              //   mergedPullRequestList,
-              //   openPullRequestList,
-              //   closedPullRequestList,
-              //   openIssueList,
-              //   closedIssueList
-              // )
             });
           }
         },
@@ -172,6 +169,25 @@ class RepoSearch extends Component {
     }
 
     return averageTime;
+  }
+
+  calculateAveragePullRequestMergeTime(pullRequests) {
+    const pullRequestData = new PullRequestData(0, 0);
+
+    if (pullRequests.length > 0) {
+      pullRequestData.totalCount = pullRequests.length;
+      pullRequestData.totalTime = pullRequests.reduce(
+        (previousTime, pullRequest) =>
+          previousTime +
+          Math.abs(
+            new Date(pullRequest.mergedAt).getTime() -
+              new Date(pullRequest.createdAt).getTime()
+          ),
+        0
+      );
+    }
+
+    return pullRequestData.getAverageTime();
   }
 
   getPullRequestList(queryResult, pullRequestState) {

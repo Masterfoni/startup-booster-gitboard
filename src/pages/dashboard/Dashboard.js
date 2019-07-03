@@ -6,7 +6,6 @@ import MonthSummary from "../../components/month-summary/MonthSummary";
 import "chartjs-plugin-style";
 import Sidenav from "../../components/sidenav/Sidenav";
 import TimeTextCard from "../../components/time-text-card/TimeTextCard";
-import PullRequestData from "../../domain/pull-request-data";
 
 class Dashboard extends Component {
   constructor(props) {
@@ -15,6 +14,7 @@ class Dashboard extends Component {
     this.state = {
       mergedPullRequestList: [],
       averageIssueCloseTime: null,
+      averagePullRequestMergeTime: null,
       monthSummaryData: null,
       isLoading: false
     };
@@ -31,29 +31,10 @@ class Dashboard extends Component {
     this.setState({
       mergedPullRequestList: gitHubData.mergedPullRequestList,
       averageIssueCloseTime: gitHubData.averageIssueCloseTime,
+      averagePullRequestMergeTime: gitHubData.averagePullRequestMergeTime,
       monthSummaryData: gitHubData.monthSummaryData
     });
   };
-
-  calculateAveragePullRequestMergeTime() {
-    const pullRequests = this.state.mergedPullRequestList;
-    const pullRequestData = new PullRequestData(0, 0);
-
-    if (pullRequests.length > 0) {
-      pullRequestData.totalCount = pullRequests.length;
-      pullRequestData.totalTime = pullRequests.reduce(
-        (previousTime, pullRequest) =>
-          previousTime +
-          Math.abs(
-            new Date(pullRequest.mergedAt).getTime() -
-              new Date(pullRequest.createdAt).getTime()
-          ),
-        0
-      );
-    }
-
-    return pullRequestData.getAverageTime();
-  }
 
   render() {
     return (
@@ -83,7 +64,7 @@ class Dashboard extends Component {
             <div className="col-sm-12 col-md-6">
               <TimeTextCard
                 titleText={"Average Pull Request Merge Time"}
-                time={this.calculateAveragePullRequestMergeTime()}
+                time={this.state.averagePullRequestMergeTime}
                 isLoading={this.state.isLoading}
               />
             </div>
