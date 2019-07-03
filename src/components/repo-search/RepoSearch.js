@@ -32,11 +32,15 @@ class RepoSearch extends Component {
     this.props.onToggleLoading(isLoading);
   };
 
+  handleAlert = alertMessage => {
+    this.props.onAlertMessage(alertMessage);
+  };
+
   handleSubmit = event => {
     event.preventDefault();
 
     if (!this.state.ownerValue || !this.state.repoValue) {
-      alert("Please inform both Owner and Repository name values.");
+      this.handleAlert("Please inform both Owner and Repository name values.");
     } else {
       const ONWER_QUALIFIER = `owner: "${this.state.ownerValue}"`;
       const NAME_QUALIFIER = `name: "${this.state.repoValue}"`;
@@ -107,9 +111,8 @@ class RepoSearch extends Component {
 
           var errorMessages = this.getErrorMessages(result);
           if (errorMessages.length > 0) {
-            alert(errorMessages);
+            this.handleAlert(errorMessages);
           } else {
-            console.log(result);
             var mergedPullRequestList = this.getPullRequestList(
               result,
               "mergedPullRequests"
@@ -145,8 +148,7 @@ class RepoSearch extends Component {
           }
         },
         error => {
-          console.log(error);
-          alert(error.errors.map(err => err.message));
+          this.handleAlert(error.errors.map(err => err.message));
         }
       );
     }

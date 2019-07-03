@@ -3,9 +3,9 @@ import "./Dashboard.css";
 import RepoSearch from "../../components/repo-search/RepoSearch";
 import AverageMergeTime from "../../components/average-merge-time/AverageMergeTime";
 import MonthSummary from "../../components/month-summary/MonthSummary";
-import "chartjs-plugin-style";
 import Sidenav from "../../components/sidenav/Sidenav";
 import TimeTextCard from "../../components/time-text-card/TimeTextCard";
+import { ToastContainer, toast } from "react-toastify";
 
 class Dashboard extends Component {
   constructor(props) {
@@ -20,6 +20,10 @@ class Dashboard extends Component {
     };
   }
 
+  handleAlert = alertMessage => {
+    toast.info(alertMessage);
+  };
+
   handleToggleLoading = isLoading => {
     this.setState({
       isLoading: isLoading
@@ -27,7 +31,6 @@ class Dashboard extends Component {
   };
 
   handleDataFetched = gitHubData => {
-    console.log("Data fetched!", gitHubData);
     this.setState({
       mergedPullRequestList: gitHubData.mergedPullRequestList,
       averageIssueCloseTime: gitHubData.averageIssueCloseTime,
@@ -46,6 +49,7 @@ class Dashboard extends Component {
               <RepoSearch
                 onDataFetched={this.handleDataFetched}
                 onToggleLoading={this.handleToggleLoading}
+                onAlertMessage={this.handleAlert}
               />
             </div>
           </div>
@@ -88,6 +92,7 @@ class Dashboard extends Component {
             </div>
           </div>
         </div>
+        <ToastContainer />
       </>
     );
   }
