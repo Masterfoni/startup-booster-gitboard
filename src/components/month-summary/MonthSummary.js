@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import "./MonthSummary.css";
 import Chart from "chart.js";
 import "chartjs-plugin-style";
-import { thisExpression } from "@babel/types";
 
 class MonthSummary extends Component {
   constructor(props) {
@@ -37,24 +36,21 @@ class MonthSummary extends Component {
         labels: self.props.chartData.map(dayInfo => dayInfo.day),
         datasets: [
           {
-            data: self.props.chartData.map(dayInfo => dayInfo.totalMerged),
-            label: "Merged",
-            borderColor: "purple",
-            pointBackgroundColor: "purple",
-            fill: false
-          },
-          {
-            data: self.props.chartData.map(dayInfo => dayInfo.totalOpen),
+            data: self.props.chartData.map(
+              dayInfo => dayInfo.totalIssuesOpened
+            ),
             label: "Opened",
-            borderColor: "red",
-            pointBackgroundColor: "red",
-            fill: false
-          },
-          {
-            data: self.props.chartData.map(dayInfo => dayInfo.totalClosed),
-            label: "Closed",
             borderColor: "green",
             pointBackgroundColor: "green",
+            fill: false
+          },
+          {
+            data: self.props.chartData.map(
+              dayInfo => dayInfo.totalIssuesClosed
+            ),
+            label: "Closed",
+            borderColor: "red",
+            pointBackgroundColor: "red",
             fill: false
           }
         ]
@@ -81,17 +77,15 @@ class MonthSummary extends Component {
               let builtLabel = "";
 
               if (tooltipItem.datasetIndex === 0) {
-                builtLabel += "Merged    ";
-              } else if (tooltipItem.datasetIndex === 1) {
                 builtLabel += "Opened    ";
-              } else if (tooltipItem.datasetIndex === 2) {
+              } else if (tooltipItem.datasetIndex === 1) {
                 builtLabel += "Closed    ";
               }
 
               return builtLabel + tooltipItem.value;
             },
             title: function() {
-              return "Pull Requests";
+              return "Issues";
             }
           }
         },
@@ -122,21 +116,27 @@ class MonthSummary extends Component {
         labels: self.props.chartData.map(dayInfo => dayInfo.day),
         datasets: [
           {
-            data: self.props.chartData.map(dayInfo => dayInfo.totalMerged),
+            data: self.props.chartData.map(
+              dayInfo => dayInfo.totalPullRequestsMerged
+            ),
             label: "Merged",
             borderColor: "purple",
             pointBackgroundColor: "purple",
             fill: false
           },
           {
-            data: self.props.chartData.map(dayInfo => dayInfo.totalOpen),
+            data: self.props.chartData.map(
+              dayInfo => dayInfo.totalPullRequestsOpen
+            ),
             label: "Opened",
             borderColor: "red",
             pointBackgroundColor: "red",
             fill: false
           },
           {
-            data: self.props.chartData.map(dayInfo => dayInfo.totalClosed),
+            data: self.props.chartData.map(
+              dayInfo => dayInfo.totalPullRequestsClosed
+            ),
             label: "Closed",
             borderColor: "green",
             pointBackgroundColor: "green",
@@ -215,9 +215,9 @@ class MonthSummary extends Component {
     return this.props.chartData.reduce(
       (previousTotal, dayInfo) =>
         previousTotal +
-        dayInfo.totalMerged +
-        dayInfo.totalClosed +
-        dayInfo.totalOpen,
+        dayInfo.totalPullRequestsMerged +
+        dayInfo.totalPullRequestsClosed +
+        dayInfo.totalPullRequestsOpen,
       0
     );
   }

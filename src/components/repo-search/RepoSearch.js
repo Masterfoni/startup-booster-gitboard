@@ -34,7 +34,6 @@ class RepoSearch extends Component {
     if (!this.state.ownerValue || !this.state.repoValue) {
       alert("Please inform both Owner and Repository name values.");
     } else {
-      const ISSUE_STATE_QUALIFIER = `states: CLOSED`;
       const ONWER_QUALIFIER = `owner: "${this.state.ownerValue}"`;
       const NAME_QUALIFIER = `name: "${this.state.repoValue}"`;
       const LAST_MONTH_QUALIFIER = `filterBy: { since: "${DateTimeUtils.getLastMonth()}" }`;
@@ -43,6 +42,9 @@ class RepoSearch extends Component {
       const PULL_REQUEST_MERGED_STATE_QUALIFIER = `states: MERGED`;
       const PULL_REQUEST_OPEN_STATE_QUALIFIER = `states: OPEN`;
       const PULL_REQUEST_CLOSED_STATE_QUALIFIER = `states: CLOSED`;
+
+      const ISSUE_CLOSED_STATE_QUALIFIER = `states: CLOSED`;
+      const ISSUE_OPEN_STATE_QUALIFIER = `states: OPEN`;
 
       const GET_REPO = `{
         repository(${ONWER_QUALIFIER}, ${NAME_QUALIFIER}) {
@@ -73,11 +75,19 @@ class RepoSearch extends Component {
             }
             totalCount
           }
-          issues(${ISSUE_STATE_QUALIFIER}, ${LAST_MONTH_QUALIFIER}, ${QUANTITY_QUALIFIER}) {
+          closedIssues: issues(${ISSUE_CLOSED_STATE_QUALIFIER}, ${LAST_MONTH_QUALIFIER}, ${QUANTITY_QUALIFIER}) {
             edges {
               node {
                 createdAt
                 closedAt
+              }
+            }
+            totalCount
+          }
+          openIssues: issues(${ISSUE_OPEN_STATE_QUALIFIER}, ${LAST_MONTH_QUALIFIER}, ${QUANTITY_QUALIFIER}) {
+            edges {
+              node {
+                createdAt
               }
             }
             totalCount
@@ -104,14 +114,16 @@ class RepoSearch extends Component {
               result,
               "closedPullRequests"
             );
-            var issueList = this.getIssueList(result);
+
+            var openIssueList = this.getIssueList(result, "openIssues");
+            var closedIssueList = this.getIssueList(result, "closedIssues");
 
             this.handleDataFetched({
               averagePullRequestMergeTime: this.calculateAveragePullRequestMergeTime(
                 mergedPullRequestList
               ),
               averageIssueCloseTime: this.calculateAverageIssueCloseTime(
-                issueList
+                closedIssueList
               ),
               organizedPullRequestData: this.organizePullRequestData(
                 mergedPullRequestList
@@ -119,7 +131,9 @@ class RepoSearch extends Component {
               monthSummaryData: this.getMonthSummaryData(
                 mergedPullRequestList,
                 openPullRequestList,
-                closedPullRequestList
+                closedPullRequestList,
+                openIssueList,
+                closedIssueList
               )
             });
           }
@@ -135,7 +149,9 @@ class RepoSearch extends Component {
   getMonthSummaryData(
     mergedPullRequestList,
     openPullRequestList,
-    closedPullRequestList
+    closedPullRequestList,
+    openIssueList,
+    closedIssueList
   ) {
     var monthSummaryData = [];
 
@@ -144,46 +160,42 @@ class RepoSearch extends Component {
         day: moment()
           .subtract(i, "days")
           .format("DD MMM"),
-        totalMerged: 0,
-        totalOpen: 0,
-        totalClosed: 0
+        totalPullRequestsMerged: 0,
+        totalPullRequestsOpen: 0,
+        totalPullRequestsClosed: 0,
+        totalIssuesOpened: 0,
+        totalIssuesClosed: 0
       });
     }
 
-    mergedPullRequestList.forEach(pullRequest => {
-      let foundIndex = monthSummaryData.findIndex(
-        summaryData =>
-          summaryData.day ===
+    monthSummaryData.forEach(dayData => {
+      dayData.totalIssuesClosed = closedIssueList.filter(
+        issue =>
+          dayData.day === moment(new Date(issue.closedAt)).format("DD MMM")
+      ).length;
+
+      dayData.totalIssuesOpened = openIssueList.filter(
+        issue =>
+          dayData.day === moment(new Date(issue.createdAt)).format("DD MMM")
+      ).length;
+
+      dayData.totalPullRequestsMerged = mergedPullRequestList.filter(
+        pullRequest =>
+          dayData.day ===
           moment(new Date(pullRequest.mergedAt)).format("DD MMM")
-      );
+      ).length;
 
-      if (foundIndex !== -1) {
-        monthSummaryData[foundIndex].totalMerged++;
-      }
-    });
-
-    openPullRequestList.forEach(pullRequest => {
-      let foundIndex = monthSummaryData.findIndex(
-        summaryData =>
-          summaryData.day ===
+      dayData.totalPullRequestsOpen = openPullRequestList.filter(
+        pullRequest =>
+          dayData.day ===
           moment(new Date(pullRequest.createdAt)).format("DD MMM")
-      );
+      ).length;
 
-      if (foundIndex !== -1) {
-        monthSummaryData[foundIndex].totalOpen++;
-      }
-    });
-
-    closedPullRequestList.forEach(pullRequest => {
-      let foundIndex = monthSummaryData.findIndex(
-        summaryData =>
-          summaryData.day ===
+      dayData.totalPullRequestsClosed = closedPullRequestList.filter(
+        pullRequest =>
+          dayData.day ===
           moment(new Date(pullRequest.closedAt)).format("DD MMM")
-      );
-
-      if (foundIndex !== -1) {
-        monthSummaryData[foundIndex].totalClosed++;
-      }
+      ).length;
     });
 
     return monthSummaryData;
@@ -269,8 +281,10 @@ class RepoSearch extends Component {
     );
   }
 
-  getIssueList(queryResult) {
-    return queryResult.data.data.repository.issues.edges.map(edge => edge.node);
+  getIssueList(queryResult, issueState) {
+    return queryResult.data.data.repository[issueState].edges.map(
+      edge => edge.node
+    );
   }
 
   getErrorMessages(queryResult) {
