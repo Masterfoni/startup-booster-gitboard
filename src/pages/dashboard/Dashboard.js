@@ -1,21 +1,20 @@
 import React, { Component } from "react";
 import "./Dashboard.css";
-import DateTimeUtils from "../../utils/date-time-utils";
 import RepoSearch from "../../components/repo-search/RepoSearch";
 import AverageMergeTime from "../../components/average-merge-time/AverageMergeTime";
 import MonthSummary from "../../components/month-summary/MonthSummary";
 import "chartjs-plugin-style";
 import Sidenav from "../../components/sidenav/Sidenav";
 import TimeTextCard from "../../components/time-text-card/TimeTextCard";
+import PullRequestData from "../../domain/pull-request-data";
 
 class Dashboard extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      averagePullRequestMergeTime: null,
+      mergedPullRequestList: [],
       averageIssueCloseTime: null,
-      organizedPullRequestData: null,
       monthSummaryData: null,
       isLoading: false
     };
@@ -30,35 +29,30 @@ class Dashboard extends Component {
   handleDataFetched = gitHubData => {
     console.log("Data fetched!", gitHubData);
     this.setState({
-      averagePullRequestMergeTime: gitHubData.averagePullRequestMergeTime,
+      mergedPullRequestList: gitHubData.mergedPullRequestList,
       averageIssueCloseTime: gitHubData.averageIssueCloseTime,
-      organizedPullRequestData: this.buildBarChartData(
-        gitHubData.organizedPullRequestData
-      ),
       monthSummaryData: gitHubData.monthSummaryData
     });
   };
 
-  buildBarChartData(pullRequestData) {
-    const smallPullRequestAverageTime = pullRequestData.smallPullRequestsData.getAverageTime();
-    const mediumPullRequestAverageTime = pullRequestData.mediumPullRequestsData.getAverageTime();
-    const largePullRequestAverageTime = pullRequestData.largePullRequestsData.getAverageTime();
+  calculateAveragePullRequestMergeTime() {
+    const pullRequests = this.state.mergedPullRequestList;
+    const pullRequestData = new PullRequestData(0, 0);
 
-    return {
-      labels: ["Small", "Medium", "Large"],
-      data: {
-        totalHours: [
-          DateTimeUtils.getTotalHours(smallPullRequestAverageTime),
-          DateTimeUtils.getTotalHours(mediumPullRequestAverageTime),
-          DateTimeUtils.getTotalHours(largePullRequestAverageTime)
-        ],
-        totalCounts: [
-          pullRequestData.smallPullRequestsData.totalCount,
-          pullRequestData.mediumPullRequestsData.totalCount,
-          pullRequestData.largePullRequestsData.totalCount
-        ]
-      }
-    };
+    if (pullRequests.length > 0) {
+      pullRequestData.totalCount = pullRequests.length;
+      pullRequestData.totalTime = pullRequests.reduce(
+        (previousTime, pullRequest) =>
+          previousTime +
+          Math.abs(
+            new Date(pullRequest.mergedAt).getTime() -
+              new Date(pullRequest.createdAt).getTime()
+          ),
+        0
+      );
+    }
+
+    return pullRequestData.getAverageTime();
   }
 
   render() {
@@ -78,7 +72,7 @@ class Dashboard extends Component {
           <div className="row ml-2 mr-2 mb-4">
             <div className="col-12">
               <AverageMergeTime
-                chartData={this.state.organizedPullRequestData}
+                mergedPullRequestList={this.state.mergedPullRequestList}
                 titleText={"Average Merge Time by Pull Request Size"}
                 isLoading={this.state.isLoading}
               />
@@ -89,7 +83,7 @@ class Dashboard extends Component {
             <div className="col-sm-12 col-md-6">
               <TimeTextCard
                 titleText={"Average Pull Request Merge Time"}
-                time={this.state.averagePullRequestMergeTime}
+                time={this.calculateAveragePullRequestMergeTime()}
                 isLoading={this.state.isLoading}
               />
             </div>

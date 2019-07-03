@@ -2,19 +2,78 @@ import React, { Component } from "react";
 import "./AverageMergeTime.css";
 import Chart from "chart.js";
 import Loader from "../loader/Loader";
+import DateTimeUtils from "../../utils/date-time-utils";
+import PullRequestData from "../../domain/pull-request-data";
 
 class AverageMergeTime extends Component {
-  buildChart() {
+  buildBarChartData(pullRequestData) {
+    const smallPullRequestAverageTime = pullRequestData.smallPullRequestsData.getAverageTime();
+    const mediumPullRequestAverageTime = pullRequestData.mediumPullRequestsData.getAverageTime();
+    const largePullRequestAverageTime = pullRequestData.largePullRequestsData.getAverageTime();
+
+    return {
+      labels: ["Small", "Medium", "Large"],
+      data: {
+        totalHours: [
+          DateTimeUtils.getTotalHours(smallPullRequestAverageTime),
+          DateTimeUtils.getTotalHours(mediumPullRequestAverageTime),
+          DateTimeUtils.getTotalHours(largePullRequestAverageTime)
+        ],
+        totalCounts: [
+          pullRequestData.smallPullRequestsData.totalCount,
+          pullRequestData.mediumPullRequestsData.totalCount,
+          pullRequestData.largePullRequestsData.totalCount
+        ]
+      }
+    };
+  }
+
+  organizePullRequestData() {
+    const smallPullRequestsData = new PullRequestData(0, 0);
+    const mediumPullRequestsData = new PullRequestData(0, 0);
+    const largePullRequestsData = new PullRequestData(0, 0);
+
+    this.props.mergedPullRequestList.forEach(pullRequest => {
+      let totalModifications = pullRequest.additions + pullRequest.deletions;
+
+      if (totalModifications <= 100) {
+        smallPullRequestsData.totalCount++;
+        smallPullRequestsData.totalTime += Math.abs(
+          new Date(pullRequest.mergedAt).getTime() -
+            new Date(pullRequest.createdAt).getTime()
+        );
+      } else if (totalModifications <= 1000) {
+        mediumPullRequestsData.totalCount++;
+        mediumPullRequestsData.totalTime += Math.abs(
+          new Date(pullRequest.mergedAt).getTime() -
+            new Date(pullRequest.createdAt).getTime()
+        );
+      } else {
+        largePullRequestsData.totalCount++;
+        largePullRequestsData.totalTime += Math.abs(
+          new Date(pullRequest.mergedAt).getTime() -
+            new Date(pullRequest.createdAt).getTime()
+        );
+      }
+    });
+
+    return {
+      smallPullRequestsData,
+      mediumPullRequestsData,
+      largePullRequestsData
+    };
+  }
+
+  buildChart(chartData) {
     let context = document.getElementById("defBarChart").getContext("2d");
-    const self = this;
 
     new Chart(context, {
       type: "bar",
       data: {
-        labels: this.props.chartData.labels,
+        labels: chartData.labels,
         datasets: [
           {
-            data: this.props.chartData.data.totalHours,
+            data: chartData.data.totalHours,
             backgroundColor: [
               "rgba(54, 162, 235)",
               "rgba(54, 162, 235)",
@@ -46,13 +105,13 @@ class AverageMergeTime extends Component {
           shadowBlur: 5,
           shadowColor: "rgba(0, 0, 0, 0.3)",
           callbacks: {
-            label: function(tooltipItem, data) {
+            label: function(tooltipItem) {
               return "Average Time      " + tooltipItem.value + "h";
             },
             afterLabel: function(tooltipItem) {
               return (
                 "Pull Requests      " +
-                self.props.chartData.data.totalCounts[tooltipItem.index]
+                chartData.data.totalCounts[tooltipItem.index]
               );
             }
           }
@@ -65,7 +124,7 @@ class AverageMergeTime extends Component {
             {
               ticks: {
                 beginAtZero: true,
-                callback: function(value, index, values) {
+                callback: function(value) {
                   return value + "h";
                 }
               }
@@ -77,8 +136,13 @@ class AverageMergeTime extends Component {
   }
 
   componentDidUpdate() {
-    if (this.props.chartData) {
-      this.buildChart();
+    if (
+      this.props.mergedPullRequestList &&
+      this.props.mergedPullRequestList.length > 0
+    ) {
+      const organizedPullRequestList = this.organizePullRequestData();
+      const chartData = this.buildBarChartData(organizedPullRequestList);
+      this.buildChart(chartData);
     }
   }
 
@@ -87,7 +151,8 @@ class AverageMergeTime extends Component {
       <Loader />
     ) : (
       <div>
-        {this.props.chartData ? (
+        {this.props.mergedPullRequestList &&
+        this.props.mergedPullRequestList.length > 0 ? (
           <canvas id="defBarChart" />
         ) : (
           "No data to display"

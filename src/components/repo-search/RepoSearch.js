@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import "./RepoSearch.css";
 import RequestHelper from "../../utils/request-helper";
 import DateTimeUtils from "../../utils/date-time-utils";
-import PullRequestData from "../../domain/pull-request-data";
 import moment from "moment";
 
 class RepoSearch extends Component {
@@ -128,14 +127,9 @@ class RepoSearch extends Component {
             var closedIssueList = this.getIssueList(result, "closedIssues");
 
             this.handleDataFetched({
-              averagePullRequestMergeTime: this.calculateAveragePullRequestMergeTime(
-                mergedPullRequestList
-              ),
+              mergedPullRequestList: mergedPullRequestList,
               averageIssueCloseTime: this.calculateAverageIssueCloseTime(
                 closedIssueList
-              ),
-              organizedPullRequestData: this.organizePullRequestData(
-                mergedPullRequestList
               ),
               monthSummaryData: this.getMonthSummaryData(
                 mergedPullRequestList,
@@ -208,61 +202,6 @@ class RepoSearch extends Component {
     });
 
     return monthSummaryData;
-  }
-
-  organizePullRequestData(pullRequests) {
-    const smallPullRequestsData = new PullRequestData(0, 0);
-    const mediumPullRequestsData = new PullRequestData(0, 0);
-    const largePullRequestsData = new PullRequestData(0, 0);
-
-    pullRequests.forEach(pullRequest => {
-      let totalModifications = pullRequest.additions + pullRequest.deletions;
-
-      if (totalModifications <= 100) {
-        smallPullRequestsData.totalCount++;
-        smallPullRequestsData.totalTime += Math.abs(
-          new Date(pullRequest.mergedAt).getTime() -
-            new Date(pullRequest.createdAt).getTime()
-        );
-      } else if (totalModifications <= 1000) {
-        mediumPullRequestsData.totalCount++;
-        mediumPullRequestsData.totalTime += Math.abs(
-          new Date(pullRequest.mergedAt).getTime() -
-            new Date(pullRequest.createdAt).getTime()
-        );
-      } else {
-        largePullRequestsData.totalCount++;
-        largePullRequestsData.totalTime += Math.abs(
-          new Date(pullRequest.mergedAt).getTime() -
-            new Date(pullRequest.createdAt).getTime()
-        );
-      }
-    });
-
-    return {
-      smallPullRequestsData,
-      mediumPullRequestsData,
-      largePullRequestsData
-    };
-  }
-
-  calculateAveragePullRequestMergeTime(pullRequests) {
-    const pullRequestData = new PullRequestData(0, 0);
-
-    if (pullRequests.length > 0) {
-      pullRequestData.totalCount = pullRequests.length;
-      pullRequestData.totalTime = pullRequests.reduce(
-        (previousTime, pullRequest) =>
-          previousTime +
-          Math.abs(
-            new Date(pullRequest.mergedAt).getTime() -
-              new Date(pullRequest.createdAt).getTime()
-          ),
-        0
-      );
-    }
-
-    return pullRequestData.getAverageTime();
   }
 
   calculateAverageIssueCloseTime(issues) {
