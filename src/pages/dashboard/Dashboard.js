@@ -13,7 +13,8 @@ class Dashboard extends Component {
     this.state = {
       averageMergeTimeText: null,
       averageCloseTimeText: null,
-      organizedPullRequestData: null
+      organizedPullRequestData: null,
+      monthSummaryData: null
     };
   }
 
@@ -28,7 +29,8 @@ class Dashboard extends Component {
       ),
       organizedPullRequestData: this.buildBarChartData(
         gitHubData.organizedPullRequestData
-      )
+      ),
+      monthSummaryData: gitHubData.monthSummaryData
     });
   };
 
@@ -106,7 +108,10 @@ class Dashboard extends Component {
 
           <div className="row ml-2 mr-2 mb-4">
             <div className="col-12">
-              <LineChartCard titleText={"Month Summary"} />
+              <LineChartCard
+                chartData={this.state.monthSummaryData}
+                titleText={"Month Summary"}
+              />
             </div>
           </div>
         </div>

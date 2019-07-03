@@ -3,6 +3,7 @@ import "./RepoSearch.css";
 import RequestHelper from "../../utils/request-helper";
 import DateTimeUtils from "../../utils/date-time-utils";
 import PullRequestData from "../../domain/pull-request-data";
+import moment from "moment";
 
 class RepoSearch extends Component {
   constructor(props) {
@@ -91,18 +92,34 @@ class RepoSearch extends Component {
             alert(errorMessages);
           } else {
             console.log(result);
-            var pullRequestList = this.getPullRequestList(result);
+            var mergedPullRequestList = this.getPullRequestList(
+              result,
+              "mergedPullRequests"
+            );
+            var openPullRequestList = this.getPullRequestList(
+              result,
+              "openPullRequests"
+            );
+            var closedPullRequestList = this.getPullRequestList(
+              result,
+              "closedPullRequests"
+            );
             var issueList = this.getIssueList(result);
 
             this.handleDataFetched({
               averagePullRequestMergeTime: this.calculateAveragePullRequestMergeTime(
-                pullRequestList
+                mergedPullRequestList
               ),
               averageIssueCloseTime: this.calculateAverageIssueCloseTime(
                 issueList
               ),
               organizedPullRequestData: this.organizePullRequestData(
-                pullRequestList
+                mergedPullRequestList
+              ),
+              monthSummaryData: this.getMonthSummaryData(
+                mergedPullRequestList,
+                openPullRequestList,
+                closedPullRequestList
               )
             });
           }
@@ -114,6 +131,63 @@ class RepoSearch extends Component {
       );
     }
   };
+
+  getMonthSummaryData(
+    mergedPullRequestList,
+    openPullRequestList,
+    closedPullRequestList
+  ) {
+    var monthSummaryData = [];
+
+    for (let i = 30; i >= 0; i--) {
+      monthSummaryData.push({
+        day: moment()
+          .subtract(i, "days")
+          .format("DD MMM"),
+        totalMerged: 0,
+        totalOpen: 0,
+        totalClosed: 0
+      });
+    }
+
+    mergedPullRequestList.forEach(pullRequest => {
+      let foundIndex = monthSummaryData.findIndex(
+        summaryData =>
+          summaryData.day ===
+          moment(new Date(pullRequest.mergedAt)).format("DD MMM")
+      );
+
+      if (foundIndex !== -1) {
+        monthSummaryData[foundIndex].totalMerged++;
+      }
+    });
+
+    openPullRequestList.forEach(pullRequest => {
+      let foundIndex = monthSummaryData.findIndex(
+        summaryData =>
+          summaryData.day ===
+          moment(new Date(pullRequest.createdAt)).format("DD MMM")
+      );
+
+      if (foundIndex !== -1) {
+        monthSummaryData[foundIndex].totalOpen++;
+      }
+    });
+
+    closedPullRequestList.forEach(pullRequest => {
+      let foundIndex = monthSummaryData.findIndex(
+        summaryData =>
+          summaryData.day ===
+          moment(new Date(pullRequest.closedAt)).format("DD MMM")
+      );
+
+      if (foundIndex !== -1) {
+        monthSummaryData[foundIndex].totalClosed++;
+      }
+    });
+
+    return monthSummaryData;
+  }
 
   organizePullRequestData(pullRequests) {
     const smallPullRequestsData = new PullRequestData(0, 0);
@@ -189,8 +263,8 @@ class RepoSearch extends Component {
     return averageTime;
   }
 
-  getPullRequestList(queryResult) {
-    return queryResult.data.data.repository.mergedPullRequests.edges.map(
+  getPullRequestList(queryResult, pullRequestState) {
+    return queryResult.data.data.repository[pullRequestState].edges.map(
       edge => edge.node
     );
   }

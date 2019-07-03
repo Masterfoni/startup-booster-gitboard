@@ -69,10 +69,17 @@
   font-weight: 400;
 }
 
-.active {
+.selector.active {
+  border-top: solid blue;
   color: black;
 }
 
-.inactive {
+.selector.inactive {
   color: gray;
+}
+
+.selector:hover {
+  border-top: 0.15em solid blue;
+  cursor: pointer;
+  background-color: rgba(224, 223, 223, 0.3);
 }
