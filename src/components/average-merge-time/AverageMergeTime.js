@@ -29,6 +29,7 @@ class AverageMergeTime extends Component {
         ]
       },
       options: {
+        responsive: true,
         tooltips: {
           bodySpacing: 10,
           bodyFontSize: 14,
@@ -39,7 +40,10 @@ class AverageMergeTime extends Component {
           xPadding: 15,
           yPadding: 15,
           displayColors: false,
-
+          shadowOffsetX: 0,
+          shadowOffsetY: 0,
+          shadowBlur: 5,
+          shadowColor: "rgba(0, 0, 0, 0.3)",
           callbacks: {
             label: function(tooltipItem, data) {
               return "Average Time      " + tooltipItem.value + "h";

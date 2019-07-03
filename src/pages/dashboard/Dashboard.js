@@ -5,6 +5,8 @@ import RepoSearch from "../../components/repo-search/RepoSearch";
 import AverageMergeTime from "../../components/average-merge-time/AverageMergeTime";
 import TextCard from "../../components/text-card/TextCard";
 import MonthSummary from "../../components/month-summary/MonthSummary";
+import "chartjs-plugin-style";
+import Sidenav from "../../components/sidenav/Sidenav";
 
 class Dashboard extends Component {
   constructor(props) {
@@ -73,7 +75,8 @@ class Dashboard extends Component {
 
   render() {
     return (
-      <div className="App">
+      <>
+        <Sidenav />
         <div className="container-fluid bg-light">
           <div className="row thin-shadow mb-4 bg-white">
             <div className="col-md-12">
@@ -115,7 +118,7 @@ class Dashboard extends Component {
             </div>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 }

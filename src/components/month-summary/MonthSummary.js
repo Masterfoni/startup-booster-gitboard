@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import "./MonthSummary.css";
 import Chart from "chart.js";
-import "chartjs-plugin-style";
 
 class MonthSummary extends Component {
   constructor(props) {
@@ -90,7 +89,6 @@ class MonthSummary extends Component {
           }
         },
         legend: {
-          display: false,
           labels: {
             usePointStyle: true,
             fontSize: 14,
@@ -129,8 +127,8 @@ class MonthSummary extends Component {
               dayInfo => dayInfo.totalPullRequestsOpen
             ),
             label: "Opened",
-            borderColor: "red",
-            pointBackgroundColor: "red",
+            borderColor: "green",
+            pointBackgroundColor: "green",
             fill: false
           },
           {
@@ -138,8 +136,8 @@ class MonthSummary extends Component {
               dayInfo => dayInfo.totalPullRequestsClosed
             ),
             label: "Closed",
-            borderColor: "green",
-            pointBackgroundColor: "green",
+            borderColor: "red",
+            pointBackgroundColor: "red",
             fill: false
           }
         ]
@@ -181,7 +179,6 @@ class MonthSummary extends Component {
           }
         },
         legend: {
-          display: false,
           labels: {
             usePointStyle: true,
             fontSize: 14,
@@ -205,10 +202,7 @@ class MonthSummary extends Component {
   }
 
   componentDidUpdate() {
-    var myChart = this.buildChart();
-    document.getElementById(
-      "chartjsLegend"
-    ).innerHTML = myChart.generateLegend();
+    this.buildChart();
   }
 
   getTotalPullRequestsCount() {
@@ -263,10 +257,7 @@ class MonthSummary extends Component {
           <div className="row pl-4">
             <div className="col-12">
               {this.props.chartData ? (
-                <>
-                  <canvas id="defLineChart" />
-                  <div id="chartjsLegend" className="chartjsLegend table" />
-                </>
+                <canvas id="defLineChart" />
               ) : (
                 <div className="no-data">No data to display</div>
               )}
