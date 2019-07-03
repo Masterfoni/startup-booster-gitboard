@@ -1,8 +1,8 @@
 import React, { Component } from "react";
-import "./BarChartCard.css";
+import "./AverageMergeTime.css";
 import Chart from "chart.js";
 
-class BarChartCard extends Component {
+class AverageMergeTime extends Component {
   buildChart() {
     let context = document.getElementById("defBarChart").getContext("2d");
     const self = this;
@@ -97,4 +97,4 @@ class BarChartCard extends Component {
   }
 }
 
-export default BarChartCard;
+export default AverageMergeTime;

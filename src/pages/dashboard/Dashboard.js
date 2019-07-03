@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import "./Dashboard.css";
 import DateTimeUtils from "../../utils/date-time-utils";
 import RepoSearch from "../../components/repo-search/RepoSearch";
-import BarChartCard from "../../components/bar-chart-card/BarChartCard";
+import AverageMergeTime from "../../components/average-merge-time/AverageMergeTime";
 import TextCard from "../../components/text-card/TextCard";
 import MonthSummary from "../../components/month-summary/MonthSummary";
 
@@ -83,7 +83,7 @@ class Dashboard extends Component {
 
           <div className="row ml-2 mr-2 mb-4">
             <div className="col-12">
-              <BarChartCard
+              <AverageMergeTime
                 chartData={this.state.organizedPullRequestData}
                 titleText={"Average Merge Time by Pull Request Size"}
               />
