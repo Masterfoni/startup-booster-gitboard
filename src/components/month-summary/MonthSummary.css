@@ -18,14 +18,16 @@
   margin: 0 auto;
 }
 
-.selector-title {
-  font-size: x-large;
-  font-weight: 400;
-}
+@media (min-width: 800px) {
+  .selector-title {
+    font-size: x-large;
+    font-weight: 400;
+  }
 
-.selector-quantity {
-  font-size: -webkit-xxx-large;
-  font-weight: 400;
+  .selector-quantity {
+    font-size: -webkit-xxx-large;
+    font-weight: 400;
+  }
 }
 
 .selector.active {
