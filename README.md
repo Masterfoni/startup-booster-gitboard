@@ -1,4 +1,6 @@
-## Startup Booster Gitboard
+﻿## Startup Booster Gitboard
+
+[![Build Status](https://travis-ci.org/lyef/lyef-react-component.svg)](https://travis-ci.org/lyef/lyef-react-component/)
 
 This project is a Dashboard application that shows metrics abour a specific repository, all you need to do is search for the owner and repository name and hit enter!
 
