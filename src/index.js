@@ -6,7 +6,7 @@ import { BrowserRouter, Switch, Route } from "react-router-dom";
 import Dashboard from "./pages/dashboard/Dashboard";
 import NotFound from "./pages/not-found/NotFound";
 import "react-toastify/dist/ReactToastify.css";
-import "chartjs-plugin-style";
+import "chartjs-plugin-style/dist/chartjs-plugin-style";
 
 ReactDOM.render(
   <BrowserRouter>
