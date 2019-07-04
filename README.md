@@ -1,10 +1,13 @@
 ﻿## Startup Booster Gitboard
 
-[![Build Status](https://travis-ci.org/lyef/lyef-react-component.svg)](https://travis-ci.org/lyef/lyef-react-component/)
+[![Build Status](https://travis-ci.com/Masterfoni/startup-booster-gitboard.svg?token=a4xieDUdy2aQbz1EGJMs&branch=master)](https://travis-ci.com/Masterfoni/startup-booster-gitboard) [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
-This project is a Dashboard application that shows metrics abour a specific repository, all you need to do is search for the owner and repository name and hit enter!
+This project is a Dashboard application that shows metrics about a specific repository, all you need to do is search for the owner and repository name and hit enter!
 
 ## Getting Started
+
+### Prerequisites
+You need to have node.js installed in your computer, you can download it and install in this [link](https://nodejs.org/en/).
 
 ### Installation
 
@@ -29,42 +32,6 @@ REACT_APP_GITHUB_PERSONAL_ACCESS_TOKEN=YOUR_TOKEN_HERE
 ```
 
 Thats it! All you gotta do now is run ``` npm start``` and open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-### Folders and Files
-
-```sh
-├── public
-│   └── favicon.ico
-│   └── index.html
-│   └── manifest.json
-├── src
-│   └── assets
-│   │   └── images
-│   │   │   └── liferay_icon.PNG
-│   └── components
-│   │   └── average-merge-time
-│   │   └── loader
-│   │   └── month-summary
-│   │   └── repo-search
-│   │   └── sidenav
-│   │   └── time-text-card
-│   └── domain
-│   │   └── pull-request-data.js
-│   └── pages
-│   │   └── dashboard
-│   │   └── not-found
-│   └── utils
-│   │   └── date-time-utils.js
-│   │   └── request-helper.js
-│   └── index.css
-│   └── index.js
-├── .env
-├── .gitignore
-├── LICENSE
-├── package-lock.json
-├── package.json
-└── README.md
-```
 
 ## What I used?
 
