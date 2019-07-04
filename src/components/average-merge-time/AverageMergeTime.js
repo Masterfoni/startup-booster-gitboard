@@ -5,10 +5,22 @@ import Loader from "../loader/Loader";
 import DateTimeUtils from "../../helpers/date-time-utils";
 
 class AverageMergeTime extends Component {
+  /**
+   * @description Calculates the average given the sum and total number of elements
+   * @param {Number} totalTime  Total time in miliseconds
+   * @param {Number} totalCount Total number of elements
+   * @return {Number} The average time
+   */
   calculateAverageTime = (totalTime, totalCount) => {
     return totalCount > 0 ? totalTime / totalCount : 0;
   };
 
+  /**
+   * @description Builds the input needed for the chart to be rendered, containing
+   * the labels and data needed
+   * @param {Object} pullRequestData  Object containing data organized by pull request size
+   * @return {Object} Object contaning the data needed for the chart do be rendered, including labels
+   */
   buildBarChartData = pullRequestData => {
     const smallPullRequestAverageTime = this.calculateAverageTime(
       pullRequestData.smallPullRequestsData.totalTime,
@@ -40,6 +52,12 @@ class AverageMergeTime extends Component {
     };
   };
 
+  /**
+   * @description Organizes pull requests in different arrays grouped by pull request size
+   * the pull request list is located on this component's props
+   * @return {Object} Object contaning thre arrays, one for small, one for medium
+   * and one for large pull requests
+   */
   organizePullRequestData = () => {
     const smallPullRequestsData = {
       totalCount: 0,
@@ -85,6 +103,10 @@ class AverageMergeTime extends Component {
     };
   };
 
+  /**
+   * @description Builds the chart element with the needed options
+   * @param {Object} chartData  Object containing labels and data needed for the chart rendering
+   */
   buildChart = chartData => {
     const chartElement = document.getElementById("defBarChart");
     if (chartElement) {
@@ -170,6 +192,10 @@ class AverageMergeTime extends Component {
     }
   };
 
+  /**
+   * @description Checks wether the component is loading or not and renders the loader component or the chart content
+   * @return {Component} Loader component or the bar chart
+   */
   checkLoading = () => {
     return this.props.isLoading ? (
       <Loader />

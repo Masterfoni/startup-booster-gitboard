@@ -297,6 +297,10 @@ class MonthSummary extends Component {
     );
   };
 
+  /**
+   * @description Count the total number of issues across all states
+   * @return {Number}     Total number of issues
+   */
   getTotalIssuesCount = () => {
     return this.getMonthSummaryStatistics().reduce(
       (previousTotal, dayInfo) =>
