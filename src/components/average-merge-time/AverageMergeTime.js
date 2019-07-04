@@ -3,13 +3,25 @@ import "./AverageMergeTime.css";
 import Chart from "chart.js";
 import Loader from "../loader/Loader";
 import DateTimeUtils from "../../utils/date-time-utils";
-import PullRequestData from "../../domain/pull-request-data";
 
 class AverageMergeTime extends Component {
+  calculateAverageTime = (totalTime, totalCount) => {
+    return totalCount > 0 ? totalTime / totalCount : 0;
+  };
+
   buildBarChartData(pullRequestData) {
-    const smallPullRequestAverageTime = pullRequestData.smallPullRequestsData.getAverageTime();
-    const mediumPullRequestAverageTime = pullRequestData.mediumPullRequestsData.getAverageTime();
-    const largePullRequestAverageTime = pullRequestData.largePullRequestsData.getAverageTime();
+    const smallPullRequestAverageTime = this.calculateAverageTime(
+      pullRequestData.smallPullRequestsData.totalTime,
+      pullRequestData.smallPullRequestsData.totalCount
+    );
+    const mediumPullRequestAverageTime = this.calculateAverageTime(
+      pullRequestData.mediumPullRequestsData.totalTime,
+      pullRequestData.mediumPullRequestsData.totalCount
+    );
+    const largePullRequestAverageTime = this.calculateAverageTime(
+      pullRequestData.largePullRequestsData.totalTime,
+      pullRequestData.largePullRequestsData.totalCount
+    );
 
     return {
       labels: ["Small", "Medium", "Large"],
@@ -29,9 +41,18 @@ class AverageMergeTime extends Component {
   }
 
   organizePullRequestData() {
-    const smallPullRequestsData = new PullRequestData(0, 0);
-    const mediumPullRequestsData = new PullRequestData(0, 0);
-    const largePullRequestsData = new PullRequestData(0, 0);
+    const smallPullRequestsData = {
+      totalCount: 0,
+      totalTime: 0
+    };
+    const mediumPullRequestsData = {
+      totalCount: 0,
+      totalTime: 0
+    };
+    const largePullRequestsData = {
+      totalCount: 0,
+      totalTime: 0
+    };
 
     this.props.mergedPullRequestList.forEach(pullRequest => {
       let totalModifications = pullRequest.additions + pullRequest.deletions;

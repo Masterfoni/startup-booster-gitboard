@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import "./RepoSearch.css";
 import RequestHelper from "../../utils/request-helper";
 import DateTimeUtils from "../../utils/date-time-utils";
-import PullRequestData from "../../domain/pull-request-data";
 
 class RepoSearch extends Component {
   constructor(props) {
@@ -175,8 +174,11 @@ class RepoSearch extends Component {
     return averageTime;
   }
 
-  calculateAveragePullRequestMergeTime(pullRequests) {
-    const pullRequestData = new PullRequestData(0, 0);
+  calculateAveragePullRequestMergeTime = pullRequests => {
+    const pullRequestData = {
+      totalCount: 0,
+      totalTime: 0
+    };
 
     if (pullRequests.length > 0) {
       pullRequestData.totalCount = pullRequests.length;
@@ -191,8 +193,10 @@ class RepoSearch extends Component {
       );
     }
 
-    return pullRequestData.getAverageTime();
-  }
+    return pullRequestData.totalCount > 0
+      ? pullRequestData.totalTime / pullRequestData.totalCount
+      : 0;
+  };
 
   getPullRequestList(queryResult, pullRequestState) {
     return queryResult.data.data.repository[pullRequestState].edges.map(
