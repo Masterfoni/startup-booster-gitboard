@@ -14,7 +14,7 @@ class MonthSummary extends Component {
     };
   }
 
-  buildChart(monthSummaryStatistics) {
+  buildChart = monthSummaryStatistics => {
     const chartElement = document.getElementById("defLineChart");
 
     if (chartElement) {
@@ -27,9 +27,9 @@ class MonthSummary extends Component {
           : this.getIssueModeOptions(monthSummaryStatistics)
       );
     }
-  }
+  };
 
-  getMonthSummaryStatistics() {
+  getMonthSummaryStatistics = () => {
     const mergedPullRequestList = this.props.monthSummaryData
       .mergedPullRequestList;
     const openPullRequestList = this.props.monthSummaryData.openPullRequestList;
@@ -84,9 +84,9 @@ class MonthSummary extends Component {
     });
 
     return monthSummaryStatistics;
-  }
+  };
 
-  getIssueModeOptions(monthSummaryStatistics) {
+  getIssueModeOptions = monthSummaryStatistics => {
     return {
       type: "line",
       data: {
@@ -161,9 +161,9 @@ class MonthSummary extends Component {
         }
       }
     };
-  }
+  };
 
-  getPullRequestModeOptions(monthSummaryStatistics) {
+  getPullRequestModeOptions = monthSummaryStatistics => {
     return {
       type: "line",
       data: {
@@ -249,15 +249,15 @@ class MonthSummary extends Component {
         }
       }
     };
-  }
+  };
 
-  changeTab(isPullRequest) {
+  changeTab = isPullRequest => {
     this.setState({
       pullRequestMode: isPullRequest
     });
-  }
+  };
 
-  getTotalPullRequestsCount() {
+  getTotalPullRequestsCount = () => {
     return this.getMonthSummaryStatistics().reduce(
       (previousTotal, dayInfo) =>
         previousTotal +
@@ -266,9 +266,9 @@ class MonthSummary extends Component {
         dayInfo.totalPullRequestsOpen,
       0
     );
-  }
+  };
 
-  checkLoading() {
+  checkLoading = () => {
     return this.props.isLoading ? (
       <Loader />
     ) : (
@@ -315,14 +315,14 @@ class MonthSummary extends Component {
         </div>
       </>
     );
-  }
+  };
 
-  componentDidUpdate() {
+  componentDidUpdate = () => {
     if (this.props.monthSummaryData) {
       var monthSummaryStatistics = this.getMonthSummaryStatistics();
       this.buildChart(monthSummaryStatistics);
     }
-  }
+  };
 
   render() {
     return (

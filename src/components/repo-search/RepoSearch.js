@@ -155,7 +155,7 @@ class RepoSearch extends Component {
     }
   };
 
-  calculateAverageIssueCloseTime(issues) {
+  calculateAverageIssueCloseTime = issues => {
     let averageTime = 0;
 
     if (issues.length > 0) {
@@ -172,7 +172,7 @@ class RepoSearch extends Component {
     }
 
     return averageTime;
-  }
+  };
 
   calculateAveragePullRequestMergeTime = pullRequests => {
     const pullRequestData = {
@@ -198,23 +198,23 @@ class RepoSearch extends Component {
       : 0;
   };
 
-  getPullRequestList(queryResult, pullRequestState) {
+  getPullRequestList = (queryResult, pullRequestState) => {
     return queryResult.data.data.repository[pullRequestState].edges.map(
       edge => edge.node
     );
-  }
+  };
 
-  getIssueList(queryResult, issueState) {
+  getIssueList = (queryResult, issueState) => {
     return queryResult.data.data.repository[issueState].edges.map(
       edge => edge.node
     );
-  }
+  };
 
-  getErrorMessages(queryResult) {
+  getErrorMessages = queryResult => {
     return queryResult.data.errors
       ? queryResult.data.errors.map(err => err.message)
       : [];
-  }
+  };
 
   render() {
     return (

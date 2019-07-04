@@ -9,7 +9,7 @@ class AverageMergeTime extends Component {
     return totalCount > 0 ? totalTime / totalCount : 0;
   };
 
-  buildBarChartData(pullRequestData) {
+  buildBarChartData = pullRequestData => {
     const smallPullRequestAverageTime = this.calculateAverageTime(
       pullRequestData.smallPullRequestsData.totalTime,
       pullRequestData.smallPullRequestsData.totalCount
@@ -38,9 +38,9 @@ class AverageMergeTime extends Component {
         ]
       }
     };
-  }
+  };
 
-  organizePullRequestData() {
+  organizePullRequestData = () => {
     const smallPullRequestsData = {
       totalCount: 0,
       totalTime: 0
@@ -83,9 +83,9 @@ class AverageMergeTime extends Component {
       mediumPullRequestsData,
       largePullRequestsData
     };
-  }
+  };
 
-  buildChart(chartData) {
+  buildChart = chartData => {
     const chartElement = document.getElementById("defBarChart");
     if (chartElement) {
       let context = chartElement.getContext("2d");
@@ -157,9 +157,9 @@ class AverageMergeTime extends Component {
         }
       });
     }
-  }
+  };
 
-  componentDidUpdate() {
+  componentDidUpdate = () => {
     if (
       this.props.mergedPullRequestList &&
       this.props.mergedPullRequestList.length > 0
@@ -168,9 +168,9 @@ class AverageMergeTime extends Component {
       const chartData = this.buildBarChartData(organizedPullRequestList);
       this.buildChart(chartData);
     }
-  }
+  };
 
-  checkLoading() {
+  checkLoading = () => {
     return this.props.isLoading ? (
       <Loader />
     ) : (
@@ -183,7 +183,7 @@ class AverageMergeTime extends Component {
         )}
       </div>
     );
-  }
+  };
 
   render() {
     return (
