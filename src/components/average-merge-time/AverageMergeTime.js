@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import "./AverageMergeTime.css";
 import Chart from "chart.js";
 import Loader from "../loader/Loader";
-import DateTimeUtils from "../../utils/date-time-utils";
+import DateTimeUtils from "../../helpers/date-time-utils";
 
 class AverageMergeTime extends Component {
   calculateAverageTime = (totalTime, totalCount) => {

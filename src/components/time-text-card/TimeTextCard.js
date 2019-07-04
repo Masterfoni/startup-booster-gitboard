@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "./TimeTextCard.css";
 import Loader from "../loader/Loader";
-import DateTimeUtils from "../../utils/date-time-utils";
+import DateTimeUtils from "../../helpers/date-time-utils";
 
 class TimeTextCard extends Component {
   /**

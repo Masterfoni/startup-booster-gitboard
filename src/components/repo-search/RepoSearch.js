@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "./RepoSearch.css";
-import RequestHelper from "../../utils/request-helper";
-import DateTimeUtils from "../../utils/date-time-utils";
+import RequestHelper from "../../helpers/request-helper";
+import DateTimeUtils from "../../helpers/date-time-utils";
 
 class RepoSearch extends Component {
   constructor(props) {
