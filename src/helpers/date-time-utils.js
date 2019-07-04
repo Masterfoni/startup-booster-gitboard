@@ -1,13 +1,13 @@
-import moment from "moment";
+const moment = require("moment");
 
-export default class DateTimeUtils {
+const dateTimeUtils = {
   /**
    * @description Build an object containing the total number of days, hours, minutes and seconds
    * from a milisecond total time
    * @param  {Number} totalMiliseconds The total number of miliseconds
    * @return {Object}                  Object containg days, hours, minutes and seconds properties.
    */
-  static getTotalDaysHoursMinutes = totalMiliseconds => {
+  getTotalDaysHoursMinutes: totalMiliseconds => {
     var days, hours, minutes, seconds;
 
     seconds = Math.floor(totalMiliseconds / 1000);
@@ -19,14 +19,14 @@ export default class DateTimeUtils {
     hours = hours % 24;
 
     return { days: days, hours: hours, minutes: minutes, seconds: seconds };
-  };
+  },
 
   /**
    * @description Returns the total number of hours from a total number of miliseconds
    * @param  {Number} totalMiliseconds The total number of miliseconds
    * @return {Number}                  Total number of hours
    */
-  static getTotalHours = totalMiliseconds => {
+  getTotalHours: totalMiliseconds => {
     var hours, minutes, seconds;
 
     seconds = Math.floor(totalMiliseconds / 1000);
@@ -34,15 +34,17 @@ export default class DateTimeUtils {
     hours = Math.floor(minutes / 60);
 
     return hours;
-  };
+  },
 
   /**
    * @description Returns the date 30 prior to this date
    * @return {Date} Date corresponding 30 days ago
    */
-  static getLastMonth = () => {
+  getLastMonth: () => {
     return moment()
       .subtract(1, "months")
       .format();
-  };
-}
+  }
+};
+
+module.exports = dateTimeUtils;
