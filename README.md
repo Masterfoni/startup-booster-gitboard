@@ -37,7 +37,8 @@ Thats it! All you gotta do now is run ``` npm start``` and open [http://localhos
 
 - [React](https://reactjs.org/)
 - [Bootstrap](https://getbootstrap.com/)
-- **Plugins**
+- **Plugins and Libs**
+	- [Jest](https://jestjs.io/)
 	- [moment.js](https://momentjs.com/)
 	- [axios](https://github.com/axios/axios)
 	- [React-Toastify](https://github.com/fkhadra/react-toastify)
