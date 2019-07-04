@@ -11,6 +11,13 @@ const axiosGitHubGraphQL = axios.create({
 });
 
 export default class GithubRequestHelper {
+  /**
+   * @description This is the default request function for the app's main page,
+   * it gets some information from the last 100 pull requests and issues
+   * @param  {String} onwer     The login/name of the user/organization
+   * @param  {String} repoName  The repository name
+   * @return {Promise}          Returns a promise of the request data based on the GET_REPO query
+   */
   static sendDashboardRequest = (owner, repoName) => {
     const LAST_MONTH_QUALIFIER = `filterBy: { since: "${DateTimeUtils.getLastMonth()}" }`;
 
