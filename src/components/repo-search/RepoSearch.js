@@ -17,23 +17,53 @@ class RepoSearch extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
+  /**
+   * @description Handles the change event of the owner input, passing down it's value to the
+   * ownerValue state property via setState
+   * @param  {Event}  event     Input's event object
+   */
   handleOwnerChange = event =>
     this.setState({ ownerValue: event.target.value });
 
+  /**
+   * @description Handles the change event of the repo name input, passing down it's value to the
+   * repoValue state property via setState
+   * @param  {Event}  event     Input's event object
+   */
   handleRepoChange = event => this.setState({ repoValue: event.target.value });
 
+  /**
+   * @description Handles the data fetched from the github api after it has been processed
+   * by this component, ready to pass to it's parent
+   * @param  {Oject}  githubData     Repository processed data
+   */
   handleDataFetched = gitHubData => {
     this.props.onDataFetched(gitHubData);
   };
 
+  /**
+   * @description Handles the loading event, passing to the parent if there is a request in progress or not
+   * via the isLoading flag
+   * @param  {boolean}  isLoading   Whether or not a request is loading (waiting for response)
+   */
   handleToggleLoading = isLoading => {
     this.props.onToggleLoading(isLoading);
   };
 
+  /**
+   * @description Notifies the parent that there is an alert message to be shown
+   * @param  {String}  alertMessage   Alert message to be shown in a toast by the parent
+   */
   handleAlert = alertMessage => {
     this.props.onAlertMessage(alertMessage);
   };
 
+  /**
+   * @description Function responsible for managing the form submit action (after user hits enter)
+   * this function make a request to the github API (V4) and build the data in a way that the
+   * dasboard component can use to pass down for its children.
+   * @param  {Event} Event             Event object, uset only to stop the default propagation
+   */
   handleSubmit = event => {
     event.preventDefault();
 
@@ -96,6 +126,11 @@ class RepoSearch extends Component {
     }
   };
 
+  /**
+   * @description Calculate the average time for an issue to be closed based on an issue list
+   * @param  {Array} Issues       List of closed issues having the createdAt and closedAt properties
+   * @return {Number}             Average time in miliseconds
+   */
   calculateAverageIssueCloseTime = issues => {
     let averageTime = 0;
 
@@ -115,6 +150,11 @@ class RepoSearch extends Component {
     return averageTime;
   };
 
+  /**
+   * @description Calculate the average time for a pull request to be merged based on a pull request list
+   * @param  {Array} pullRequests       List of merged pull requests having the createdAt and mergedAt properties
+   * @return {Number}                   Average time in miliseconds
+   */
   calculateAveragePullRequestMergeTime = pullRequests => {
     const pullRequestData = {
       totalCount: 0,
@@ -139,18 +179,37 @@ class RepoSearch extends Component {
       : 0;
   };
 
+  /**
+   * @description Parse the edge and nodes that the query returns in a list of more friendly pull requests objects
+   * based on the desired pull request state
+   * @param  {Object} queryResult       Actual raw api result contaning edge and pull request nodes
+   * @param  {String} pullRequestState  Alias name of the pull request specified in the query, to be accessed
+   * @return {Array}                    List of pull requests
+   */
   getPullRequestList = (queryResult, pullRequestState) => {
     return queryResult.data.data.repository[pullRequestState].edges.map(
       edge => edge.node
     );
   };
 
+  /**
+   * @description Parse the edge and nodes that the query returns in a list of more friendly issue objects
+   * based on the desired issue state
+   * @param  {Object} queryResult       Actual raw api result contaning edge and issue nodes
+   * @param  {String} pullRequestState  Alias name of the issue specified in the query, to be accessed
+   * @return {Array}                    List of issues
+   */
   getIssueList = (queryResult, issueState) => {
     return queryResult.data.data.repository[issueState].edges.map(
       edge => edge.node
     );
   };
 
+  /**
+   * @description Parse the errors that the query returns and extracts the error messages only
+   * @param  {Object} queryResult       Actual raw api result
+   * @return {Array}                    List of error messages
+   */
   getErrorMessages = queryResult => {
     return queryResult.data.errors
       ? queryResult.data.errors.map(err => err.message)
