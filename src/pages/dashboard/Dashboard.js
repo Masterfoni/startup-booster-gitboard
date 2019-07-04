@@ -67,8 +67,8 @@ class Dashboard extends Component {
             </div>
           </div>
 
-          <div className="row ml-2 mr-2 mb-4">
-            <div className="col-sm-12 col-md-6">
+          <div className="row ml-2 mr-2">
+            <div className="col-sm-12 col-md-6  mb-4">
               <TimeTextCard
                 titleText={"Average Pull Request Merge Time"}
                 time={this.state.averagePullRequestMergeTime}
@@ -76,7 +76,7 @@ class Dashboard extends Component {
               />
             </div>
 
-            <div className="col-sm-12 col-md-6">
+            <div className="col-sm-12 col-md-6 mb-4">
               <TimeTextCard
                 titleText={"Average Issue Close Time"}
                 time={this.state.averageIssueCloseTime}
