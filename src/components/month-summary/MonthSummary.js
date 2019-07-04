@@ -297,6 +297,14 @@ class MonthSummary extends Component {
     );
   };
 
+  getTotalIssuesCount = () => {
+    return this.getMonthSummaryStatistics().reduce(
+      (previousTotal, dayInfo) =>
+        previousTotal + dayInfo.totalIssuesClosed + dayInfo.totalIssuesOpened,
+      0
+    );
+  };
+
   /**
    * @description Checks wether the component is loading or not and renders the loader component or the chart content
    * @return {Component} Loader component or the chart and tabs will be rendered on the body of the card
@@ -331,7 +339,9 @@ class MonthSummary extends Component {
               >
                 <span className="selector-title">Issues</span>
                 <br />
-                <span className="selector-quantity">60</span>
+                <span className="selector-quantity">
+                  {this.getTotalIssuesCount()}
+                </span>
               </div>
             </div>
           </>
