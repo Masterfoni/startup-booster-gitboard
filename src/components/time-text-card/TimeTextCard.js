@@ -4,7 +4,12 @@ import Loader from "../loader/Loader";
 import DateTimeUtils from "../../utils/date-time-utils";
 
 class TimeTextCard extends Component {
-  buildTimeText() {
+  /**
+   * @description Based on the time prop, render the total time in the following format:
+   * XXdays XXhXXm
+   * @return {String} The built text in the format described
+   */
+  buildTimeText = () => {
     let dayPart = "";
 
     const totalDaysHoursMinutes = DateTimeUtils.getTotalDaysHoursMinutes(
@@ -24,15 +29,19 @@ class TimeTextCard extends Component {
       totalDaysHoursMinutes.minutes +
       "m"
     );
-  }
+  };
 
-  checkLoading() {
+  /**
+   * @description Checks wether the component is loading or not and renders the loader component or the text itself
+   * @return {Component} Loader component or the text that will be rendered on the body of the card
+   */
+  checkLoading = () => {
     return this.props.isLoading ? (
       <Loader />
     ) : (
       <div>{this.props.time ? this.buildTimeText() : "No data to display"}</div>
     );
-  }
+  };
 
   render() {
     return (
