@@ -1,1 +1,0 @@
-# startup-booster-gitboard
