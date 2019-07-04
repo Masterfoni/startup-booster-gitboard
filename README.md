@@ -1,68 +1,79 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Startup Booster Gitboard
 
-## Available Scripts
+This project is a Dashboard application that shows metrics abour a specific repository, all you need to do is search for the owner and repository name and hit enter!
 
-In the project directory, you can run:
+## Getting Started
 
-### `npm start`
+### Installation
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+After cloning or downloading this repository, navigate to the folder and run:
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+```
+npm install
+```
 
-### `npm test`
+On the same folder, create a .env file with no name that will hold your OAuth access token, if you are using Linux the command should be:
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```
+cat .env
+```
 
-### `npm run build`
+In this .env file, you need to write your access token, this token will be used as a header on the GitHub api requests made by the app. If you don't know how to generate your personal access token, there is a very simple tutorial [here](https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line).
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+After doing that, the file should look like this:
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+```
+REACT_APP_GITHUB_PERSONAL_ACCESS_TOKEN=YOUR_TOKEN_HERE
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Thats it! All you gotta do now is run ``` npm start``` and open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-### `npm run eject`
+### Folders and Files
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+```sh
+├── public
+│   └── favicon.ico
+│   └── index.html
+│   └── manifest.json
+├── src
+│   └── assets
+│   │   └── images
+│   │   │   └── liferay_icon.PNG
+│   └── components
+│   │   └── average-merge-time
+│   │   └── loader
+│   │   └── month-summary
+│   │   └── repo-search
+│   │   └── sidenav
+│   │   └── time-text-card
+│   └── domain
+│   │   └── pull-request-data.js
+│   └── pages
+│   │   └── dashboard
+│   │   └── not-found
+│   └── utils
+│   │   └── date-time-utils.js
+│   │   └── request-helper.js
+│   └── index.css
+│   └── index.js
+├── .env
+├── .gitignore
+├── LICENSE
+├── package-lock.json
+├── package.json
+└── README.md
+```
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## What I used?
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+- [React](https://reactjs.org/)
+- [Bootstrap](https://getbootstrap.com/)
+- **Plugins**
+	- [moment.js](https://momentjs.com/)
+	- [axios](https://github.com/axios/axios)
+	- [React-Toastify](https://github.com/fkhadra/react-toastify)
+	- [chart.js](https://www.chartjs.org/)
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+## License
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+[MIT License](https://github.com/Masterfoni/startup-booster-gitboard/blob/master/LICENSE)
