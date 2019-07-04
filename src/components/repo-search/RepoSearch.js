@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import "./RepoSearch.css";
-import RequestHelper from "../../helpers/request-helper";
-import DateTimeUtils from "../../helpers/date-time-utils";
+import GithubRequestHelper from "../../helpers/github-request-helper";
 
 class RepoSearch extends Component {
   constructor(props) {
@@ -41,70 +40,12 @@ class RepoSearch extends Component {
     if (!this.state.ownerValue || !this.state.repoValue) {
       this.handleAlert("Please inform both Owner and Repository name values.");
     } else {
-      const ONWER_QUALIFIER = `owner: "${this.state.ownerValue}"`;
-      const NAME_QUALIFIER = `name: "${this.state.repoValue}"`;
-      const LAST_MONTH_QUALIFIER = `filterBy: { since: "${DateTimeUtils.getLastMonth()}" }`;
-      const QUANTITY_QUALIFIER = `last: 100`;
-
-      const PULL_REQUEST_MERGED_STATE_QUALIFIER = `states: MERGED`;
-      const PULL_REQUEST_OPEN_STATE_QUALIFIER = `states: OPEN`;
-      const PULL_REQUEST_CLOSED_STATE_QUALIFIER = `states: CLOSED`;
-
-      const ISSUE_CLOSED_STATE_QUALIFIER = `states: CLOSED`;
-      const ISSUE_OPEN_STATE_QUALIFIER = `states: OPEN`;
-
-      const GET_REPO = `{
-        repository(${ONWER_QUALIFIER}, ${NAME_QUALIFIER}) {
-          mergedPullRequests: pullRequests(${PULL_REQUEST_MERGED_STATE_QUALIFIER}, ${QUANTITY_QUALIFIER}) {
-            edges {
-              node {
-                createdAt
-                mergedAt
-                additions
-                deletions
-              }
-            }
-            totalCount
-          }
-          openPullRequests: pullRequests(${PULL_REQUEST_OPEN_STATE_QUALIFIER}, ${QUANTITY_QUALIFIER}) {
-            edges {
-              node {
-                createdAt
-              }
-            }
-            totalCount
-          }
-          closedPullRequests: pullRequests(${PULL_REQUEST_CLOSED_STATE_QUALIFIER}, ${QUANTITY_QUALIFIER}) {
-            edges {
-              node {
-                closedAt
-              }
-            }
-            totalCount
-          }
-          closedIssues: issues(${ISSUE_CLOSED_STATE_QUALIFIER}, ${LAST_MONTH_QUALIFIER}, ${QUANTITY_QUALIFIER}) {
-            edges {
-              node {
-                createdAt
-                closedAt
-              }
-            }
-            totalCount
-          }
-          openIssues: issues(${ISSUE_OPEN_STATE_QUALIFIER}, ${LAST_MONTH_QUALIFIER}, ${QUANTITY_QUALIFIER}) {
-            edges {
-              node {
-                createdAt
-              }
-            }
-            totalCount
-          }
-        }
-      }`;
-
       this.handleToggleLoading(true);
 
-      RequestHelper.sendRequest(GET_REPO).then(
+      GithubRequestHelper.sendDashboardRequest(
+        this.state.ownerValue,
+        this.state.repoValue
+      ).then(
         result => {
           this.handleToggleLoading(false);
 
