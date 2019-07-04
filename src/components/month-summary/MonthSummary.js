@@ -14,6 +14,12 @@ class MonthSummary extends Component {
     };
   }
 
+  /**
+   * @description Checks if the selected statistics to show are about issues or pull requests
+   * and build a specific chart for each one
+   * @param  {Object} monthSummaryStatistics       Object containing different lists of pull requests
+   * grouped by state, and lists of issues grouped by state
+   */
   buildChart = monthSummaryStatistics => {
     const chartElement = document.getElementById("defLineChart");
 
@@ -29,6 +35,11 @@ class MonthSummary extends Component {
     }
   };
 
+  /**
+   * @description Based on the props passed to this componnet, groups statistics of each day
+   * over a period of a month (30 days ago until now)
+   * @return {Array}  Array of objects representing days contaning pull requests and issue statistics
+   */
   getMonthSummaryStatistics = () => {
     const mergedPullRequestList = this.props.monthSummaryData
       .mergedPullRequestList;
@@ -86,6 +97,11 @@ class MonthSummary extends Component {
     return monthSummaryStatistics;
   };
 
+  /**
+   * @description Get default line chart configuraion for the issues chart
+   * @param {Array} monthSummaryStatistics Array of days with statistics about issues and pull requests
+   * @return {Object} Options object that will configure style, tooltip and label functions of the chart
+   */
   getIssueModeOptions = monthSummaryStatistics => {
     return {
       type: "line",
@@ -163,6 +179,11 @@ class MonthSummary extends Component {
     };
   };
 
+  /**
+   * @description Get default line chart configuraion for the pull request chart
+   * @param {Array} monthSummaryStatistics Array of days with statistics about issues and pull requests
+   * @return {Object} Options object that will configure style, tooltip and label functions of the chart
+   */
   getPullRequestModeOptions = monthSummaryStatistics => {
     return {
       type: "line",
@@ -251,12 +272,20 @@ class MonthSummary extends Component {
     };
   };
 
+  /**
+   * @description Change between pull request and issue mode to view different charts
+   * @param {boolean} isPullRequest boolean representing if the pull request tab is active or not
+   */
   changeTab = isPullRequest => {
     this.setState({
       pullRequestMode: isPullRequest
     });
   };
 
+  /**
+   * @description Count the total number of pull requests across all states
+   * @return {Number}     Total number of pull requests
+   */
   getTotalPullRequestsCount = () => {
     return this.getMonthSummaryStatistics().reduce(
       (previousTotal, dayInfo) =>
@@ -268,6 +297,10 @@ class MonthSummary extends Component {
     );
   };
 
+  /**
+   * @description Checks wether the component is loading or not and renders the loader component or the chart content
+   * @return {Component} Loader component or the chart and tabs will be rendered on the body of the card
+   */
   checkLoading = () => {
     return this.props.isLoading ? (
       <Loader />
