@@ -111,7 +111,9 @@ class RepoSearch extends Component {
 
           var errorMessages = this.getErrorMessages(result);
           if (errorMessages.length > 0) {
-            this.handleAlert(errorMessages);
+            errorMessages.forEach(errorMessage =>
+              this.handleAlert(errorMessage)
+            );
           } else {
             var mergedPullRequestList = this.getPullRequestList(
               result,
@@ -148,7 +150,7 @@ class RepoSearch extends Component {
           }
         },
         error => {
-          this.handleAlert(error.errors.map(err => err.message));
+          error.errors.map(err => this.handleAlert(err.message));
         }
       );
     }

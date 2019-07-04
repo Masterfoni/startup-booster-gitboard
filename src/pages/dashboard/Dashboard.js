@@ -21,7 +21,10 @@ class Dashboard extends Component {
   }
 
   handleAlert = alertMessage => {
-    toast.info(alertMessage);
+    toast(alertMessage, {
+      className: "gitboard-default-toast",
+      progressClassName: "gitboard-default-toast-progress"
+    });
   };
 
   handleToggleLoading = isLoading => {
