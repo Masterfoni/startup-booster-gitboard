@@ -26,12 +26,16 @@ class MonthSummary extends Component {
     if (chartElement) {
       let context = chartElement.getContext("2d");
 
-      new Chart(
+      const monthSummaryChart = new Chart(
         context,
         this.state.pullRequestMode
           ? this.getPullRequestModeOptions(monthSummaryStatistics)
           : this.getIssueModeOptions(monthSummaryStatistics)
       );
+
+      document.getElementById(
+        "chartjsLegend"
+      ).innerHTML = monthSummaryChart.generateLegend();
     }
   };
 
@@ -163,12 +167,7 @@ class MonthSummary extends Component {
           }
         },
         legend: {
-          labels: {
-            usePointStyle: true,
-            fontSize: 14,
-            padding: 30
-          },
-          position: "bottom"
+          display: false
         },
         elements: {
           line: {
@@ -192,15 +191,6 @@ class MonthSummary extends Component {
         datasets: [
           {
             data: monthSummaryStatistics.map(
-              dayInfo => dayInfo.totalPullRequestsMerged
-            ),
-            label: "Merged",
-            borderColor: "purple",
-            pointBackgroundColor: "purple",
-            fill: false
-          },
-          {
-            data: monthSummaryStatistics.map(
               dayInfo => dayInfo.totalPullRequestsOpen
             ),
             label: "Opened",
@@ -215,6 +205,15 @@ class MonthSummary extends Component {
             label: "Closed",
             borderColor: "red",
             pointBackgroundColor: "red",
+            fill: false
+          },
+          {
+            data: monthSummaryStatistics.map(
+              dayInfo => dayInfo.totalPullRequestsMerged
+            ),
+            label: "Merged",
+            borderColor: "purple",
+            pointBackgroundColor: "purple",
             fill: false
           }
         ]
@@ -241,11 +240,11 @@ class MonthSummary extends Component {
               let builtLabel = "";
 
               if (tooltipItem.datasetIndex === 0) {
-                builtLabel += "Merged    ";
-              } else if (tooltipItem.datasetIndex === 1) {
                 builtLabel += "Opened    ";
-              } else if (tooltipItem.datasetIndex === 2) {
+              } else if (tooltipItem.datasetIndex === 1) {
                 builtLabel += "Closed    ";
+              } else if (tooltipItem.datasetIndex === 2) {
+                builtLabel += "Merged    ";
               }
 
               return builtLabel + tooltipItem.value;
@@ -256,12 +255,7 @@ class MonthSummary extends Component {
           }
         },
         legend: {
-          labels: {
-            usePointStyle: true,
-            fontSize: 14,
-            padding: 30
-          },
-          position: "bottom"
+          display: false
         },
         elements: {
           line: {
@@ -354,7 +348,10 @@ class MonthSummary extends Component {
         <div className="row pl-4">
           <div className="col-12">
             {this.props.monthSummaryData ? (
-              <canvas id="defLineChart" />
+              <>
+                <canvas id="defLineChart" />
+                <div id="chartjsLegend" className="chartjsLegend table" />
+              </>
             ) : (
               <div className="no-data">No data to display</div>
             )}
