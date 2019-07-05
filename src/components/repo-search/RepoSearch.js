@@ -120,7 +120,7 @@ class RepoSearch extends Component {
           }
         },
         error => {
-          error.errors.map(err => this.handleAlert(err.message));
+          this.handleAlert("Ocorreu um erro inesperado, tente novamente.");
         }
       );
     }
