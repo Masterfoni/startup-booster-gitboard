@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.com/Masterfoni/startup-booster-gitboard.svg?token=a4xieDUdy2aQbz1EGJMs&branch=master)](https://travis-ci.com/Masterfoni/startup-booster-gitboard) [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
-This project is a Dashboard application that shows metrics about a specific repository, all you need to do is search for the owner and repository name and hit enter!
+This project is a Dashboard application that shows metrics about a specific repository, all you need to do is search for the owner and repository name and hit enter or navigate to the url based on this pattern: [http://localhost:3000/liferay/liferay-portal](http://localhost:3000/liferay/liferay-portal)!
 
 ## Getting Started
 
