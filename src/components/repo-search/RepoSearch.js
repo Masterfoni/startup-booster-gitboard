@@ -19,18 +19,31 @@ class RepoSearch extends Component {
 
   /**
    * @description Handles the change event of the owner input, passing down it's value to the
-   * ownerValue state property via setState
-   * @param  {Event}  event     Input's event object
+   * ownerValue state property via setState, this event is triggered by both input field and
+   * parent passing down props
+   * @param  {Event}  event     Input's event object or data passed down by the parent
    */
-  handleOwnerChange = event =>
-    this.setState({ ownerValue: event.target.value });
+  handleOwnerChange = event => {
+    if (event && event.target) {
+      this.setState({ ownerValue: event.target.value });
+    } else if (event) {
+      this.setState({ ownerValue: event });
+    }
+  };
 
   /**
    * @description Handles the change event of the repo name input, passing down it's value to the
-   * repoValue state property via setState
-   * @param  {Event}  event     Input's event object
+   * repoValue state property via setState, this event is triggered by both input field and
+   * parent passing down props
+   * @param  {Event}  event     Input's event object or data passed down by the parent
    */
-  handleRepoChange = event => this.setState({ repoValue: event.target.value });
+  handleRepoChange = event => {
+    if (event && event.target) {
+      this.setState({ repoValue: event.target.value });
+    } else if (event) {
+      this.setState({ repoValue: event });
+    }
+  };
 
   /**
    * @description Handles the data fetched from the github api after it has been processed
@@ -60,9 +73,8 @@ class RepoSearch extends Component {
 
   /**
    * @description Function responsible for managing the form submit action (after user hits enter)
-   * this function make a request to the github API (V4) and build the data in a way that the
-   * dasboard component can use to pass down for its children.
-   * @param  {Event} Event             Event object, uset only to stop the default propagation
+   * this function checks if the input fields are filled and calls fetchData
+   * @param  {Event} Event             Event object, used only to stop the default propagation
    */
   handleSubmit = event => {
     event.preventDefault();
@@ -70,60 +82,65 @@ class RepoSearch extends Component {
     if (!this.state.ownerValue || !this.state.repoValue) {
       this.handleAlert("Please inform both Owner and Repository name values.");
     } else {
-      this.handleToggleLoading(true);
-
-      GithubRequestHelper.sendDashboardRequest(
-        this.state.ownerValue,
-        this.state.repoValue
-      ).then(
-        result => {
-          this.handleToggleLoading(false);
-
-          var errorMessages = this.getErrorMessages(result);
-          if (errorMessages.length > 0) {
-            errorMessages.forEach(errorMessage =>
-              this.handleAlert(errorMessage)
-            );
-          } else {
-            var mergedPullRequestList = this.getPullRequestList(
-              result,
-              "mergedPullRequests"
-            );
-            var openPullRequestList = this.getPullRequestList(
-              result,
-              "openPullRequests"
-            );
-            var closedPullRequestList = this.getPullRequestList(
-              result,
-              "closedPullRequests"
-            );
-
-            var openIssueList = this.getIssueList(result, "openIssues");
-            var closedIssueList = this.getIssueList(result, "closedIssues");
-
-            this.handleDataFetched({
-              mergedPullRequestList: mergedPullRequestList,
-              averageIssueCloseTime: this.calculateAverageIssueCloseTime(
-                closedIssueList
-              ),
-              averagePullRequestMergeTime: this.calculateAveragePullRequestMergeTime(
-                mergedPullRequestList
-              ),
-              monthSummaryData: {
-                mergedPullRequestList,
-                openPullRequestList,
-                closedPullRequestList,
-                openIssueList,
-                closedIssueList
-              }
-            });
-          }
-        },
-        error => {
-          this.handleAlert("Ocorreu um erro inesperado, tente novamente.");
-        }
-      );
+      this.fetchData(this.state.ownerValue, this.state.repoValue);
     }
+  };
+
+  /**
+   * @description Function responsible for making a request to the github API (V4) and build
+   * the data in a way that the dasboard component can use to pass down for its children.
+   * @param  {String} ownerName       The name of the user/organization in github
+   * @param  {String} repoName        The name of the repository
+   */
+  fetchData = (ownerName, repoName) => {
+    this.handleToggleLoading(true);
+
+    GithubRequestHelper.sendDashboardRequest(ownerName, repoName).then(
+      result => {
+        this.handleToggleLoading(false);
+
+        var errorMessages = this.getErrorMessages(result);
+        if (errorMessages.length > 0) {
+          errorMessages.forEach(errorMessage => this.handleAlert(errorMessage));
+        } else {
+          var mergedPullRequestList = this.getPullRequestList(
+            result,
+            "mergedPullRequests"
+          );
+          var openPullRequestList = this.getPullRequestList(
+            result,
+            "openPullRequests"
+          );
+          var closedPullRequestList = this.getPullRequestList(
+            result,
+            "closedPullRequests"
+          );
+
+          var openIssueList = this.getIssueList(result, "openIssues");
+          var closedIssueList = this.getIssueList(result, "closedIssues");
+
+          this.handleDataFetched({
+            mergedPullRequestList: mergedPullRequestList,
+            averageIssueCloseTime: this.calculateAverageIssueCloseTime(
+              closedIssueList
+            ),
+            averagePullRequestMergeTime: this.calculateAveragePullRequestMergeTime(
+              mergedPullRequestList
+            ),
+            monthSummaryData: {
+              mergedPullRequestList,
+              openPullRequestList,
+              closedPullRequestList,
+              openIssueList,
+              closedIssueList
+            }
+          });
+        }
+      },
+      error => {
+        this.handleAlert("An unexpected error ocurred, try again.");
+      }
+    );
   };
 
   /**
@@ -215,6 +232,15 @@ class RepoSearch extends Component {
       ? queryResult.data.errors.map(err => err.message)
       : [];
   };
+
+  componentDidMount() {
+    this.handleOwnerChange(this.props.ownerName);
+    this.handleRepoChange(this.props.repoName);
+
+    if (this.props.ownerName && this.props.repoName) {
+      this.fetchData(this.props.ownerName, this.props.repoName);
+    }
+  }
 
   render() {
     return (

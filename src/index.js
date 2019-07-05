@@ -12,6 +12,7 @@ ReactDOM.render(
   <BrowserRouter>
     <Switch>
       <Route path="/" exact={true} component={Dashboard} />
+      <Route path="/:ownerName/:repoName" exact={true} component={Dashboard} />
       <Route path="*" exact={true} component={NotFound} />
     </Switch>
   </BrowserRouter>,

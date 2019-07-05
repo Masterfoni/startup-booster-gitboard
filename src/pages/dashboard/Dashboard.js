@@ -49,7 +49,10 @@ class Dashboard extends Component {
         <div className="container-fluid bg-light">
           <div className="row thin-shadow mb-4 bg-white">
             <div className="col-md-12">
+              <span />
               <RepoSearch
+                ownerName={this.props.match.params.ownerName}
+                repoName={this.props.match.params.repoName}
                 onDataFetched={this.handleDataFetched}
                 onToggleLoading={this.handleToggleLoading}
                 onAlertMessage={this.handleAlert}
