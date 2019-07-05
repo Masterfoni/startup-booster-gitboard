@@ -324,7 +324,7 @@ class MonthSummary extends Component {
               <div
                 onClick={() => this.setState({ pullRequestMode: true })}
                 className={
-                  "col-2 selector " +
+                  "col-md-2 col-sm-4 selector " +
                   (this.state.pullRequestMode ? "active" : "inactive")
                 }
               >
@@ -337,7 +337,7 @@ class MonthSummary extends Component {
               <div
                 onClick={() => this.setState({ pullRequestMode: false })}
                 className={
-                  "col-2 selector " +
+                  "col-md-2 col-sm-4 selector " +
                   (this.state.pullRequestMode ? "inactive" : "active")
                 }
               >
