@@ -270,14 +270,6 @@ export const MonthSummary = ({monthSummaryData, titleText}) => {
   };
 
   /**
-   * @description Change between pull request and issue mode to view different charts
-   * @param {boolean} isPullRequest boolean representing if the pull request tab is active or not
-   */
-  const changeTab = isPullRequest => {
-    setPullRequestMode(isPullRequest);
-  };
-
-  /**
    * @description Count the total number of pull requests across all states
    * @return {Number}     Total number of pull requests
    */
