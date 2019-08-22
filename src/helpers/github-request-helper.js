@@ -70,7 +70,6 @@ export default class GithubRequestHelper {
       }
     }`;
 
-    console.log("Here is your bearer token", process.env.REACT_APP_GITHUB_PERSONAL_ACCESS_TOKEN);
     return axiosGitHubGraphQL.post("", { query: GET_REPO });
   };
 }

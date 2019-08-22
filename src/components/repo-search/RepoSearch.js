@@ -1,21 +1,20 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import "./RepoSearch.css";
 import GithubRequestHelper from "../../helpers/github-request-helper";
 
-class RepoSearch extends Component {
-  constructor(props) {
-    super(props);
+const RepoSearch = ({ownerName, repoName, onDataFetched, onToggleLoading, onAlertMessage}) => {
 
-    this.state = {
-      ownerValue: "",
-      repoValue: "",
-      isLoading: false
-    };
+  const [ownerValue, setOwnerValue] = useState("");
+  const [repoValue, setRepoValue] = useState("");
 
-    this.handleOwnerChange = this.handleOwnerChange.bind(this);
-    this.handleRepoChange = this.handleRepoChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
+  useEffect(() => {
+    handleOwnerChange(ownerName);
+    handleRepoChange(repoName);
+
+    if (ownerName && repoName) {
+      fetchData(ownerName, repoName);
+    }
+  }, []);
 
   /**
    * @description Handles the change event of the owner input, passing down it's value to the
@@ -23,11 +22,11 @@ class RepoSearch extends Component {
    * parent passing down props
    * @param  {Event}  event     Input's event object or data passed down by the parent
    */
-  handleOwnerChange = event => {
+  const handleOwnerChange = event => {
     if (event && event.target) {
-      this.setState({ ownerValue: event.target.value });
+      setOwnerValue(event.target.value);
     } else if (event) {
-      this.setState({ ownerValue: event });
+      setOwnerValue(event);
     }
   };
 
@@ -37,11 +36,11 @@ class RepoSearch extends Component {
    * parent passing down props
    * @param  {Event}  event     Input's event object or data passed down by the parent
    */
-  handleRepoChange = event => {
+  const handleRepoChange = event => {
     if (event && event.target) {
-      this.setState({ repoValue: event.target.value });
+      setRepoValue(event.target.value);
     } else if (event) {
-      this.setState({ repoValue: event });
+      setRepoValue(event);
     }
   };
 
@@ -50,8 +49,8 @@ class RepoSearch extends Component {
    * by this component, ready to pass to it's parent
    * @param  {Oject}  githubData     Repository processed data
    */
-  handleDataFetched = gitHubData => {
-    this.props.onDataFetched(gitHubData);
+  const handleDataFetched = gitHubData => {
+    onDataFetched(gitHubData);
   };
 
   /**
@@ -59,16 +58,16 @@ class RepoSearch extends Component {
    * via the isLoading flag
    * @param  {boolean}  isLoading   Whether or not a request is loading (waiting for response)
    */
-  handleToggleLoading = isLoading => {
-    this.props.onToggleLoading(isLoading);
+  const handleToggleLoading = isLoading => {
+    onToggleLoading(isLoading);
   };
 
   /**
    * @description Notifies the parent that there is an alert message to be shown
    * @param  {String}  alertMessage   Alert message to be shown in a toast by the parent
    */
-  handleAlert = alertMessage => {
-    this.props.onAlertMessage(alertMessage);
+  const handleAlert = alertMessage => {
+    onAlertMessage(alertMessage);
   };
 
   /**
@@ -76,13 +75,13 @@ class RepoSearch extends Component {
    * this function checks if the input fields are filled and calls fetchData
    * @param  {Event} Event             Event object, used only to stop the default propagation
    */
-  handleSubmit = event => {
+  const handleSubmit = event => {
     event.preventDefault();
 
-    if (!this.state.ownerValue || !this.state.repoValue) {
-      this.handleAlert("Please inform both Owner and Repository name values.");
+    if (!ownerValue || !repoValue) {
+      handleAlert("Please inform both Owner and Repository name values.");
     } else {
-      this.fetchData(this.state.ownerValue, this.state.repoValue);
+      fetchData(ownerValue, repoValue);
     }
   };
 
@@ -92,39 +91,39 @@ class RepoSearch extends Component {
    * @param  {String} ownerName       The name of the user/organization in github
    * @param  {String} repoName        The name of the repository
    */
-  fetchData = (ownerName, repoName) => {
-    this.handleToggleLoading(true);
+  const fetchData = (ownerName, repoName) => {
+    handleToggleLoading(true);
 
     GithubRequestHelper.sendDashboardRequest(ownerName, repoName).then(
       result => {
-        this.handleToggleLoading(false);
+        handleToggleLoading(false);
 
-        var errorMessages = this.getErrorMessages(result);
+        var errorMessages = getErrorMessages(result);
         if (errorMessages.length > 0) {
-          errorMessages.forEach(errorMessage => this.handleAlert(errorMessage));
+          errorMessages.forEach(errorMessage => handleAlert(errorMessage));
         } else {
-          var mergedPullRequestList = this.getPullRequestList(
+          var mergedPullRequestList = getPullRequestList(
             result,
             "mergedPullRequests"
           );
-          var openPullRequestList = this.getPullRequestList(
+          var openPullRequestList = getPullRequestList(
             result,
             "openPullRequests"
           );
-          var closedPullRequestList = this.getPullRequestList(
+          var closedPullRequestList = getPullRequestList(
             result,
             "closedPullRequests"
           );
 
-          var openIssueList = this.getIssueList(result, "openIssues");
-          var closedIssueList = this.getIssueList(result, "closedIssues");
+          var openIssueList = getIssueList(result, "openIssues");
+          var closedIssueList = getIssueList(result, "closedIssues");
 
-          this.handleDataFetched({
+          handleDataFetched({
             mergedPullRequestList: mergedPullRequestList,
-            averageIssueCloseTime: this.calculateAverageIssueCloseTime(
+            averageIssueCloseTime: calculateAverageIssueCloseTime(
               closedIssueList
             ),
-            averagePullRequestMergeTime: this.calculateAveragePullRequestMergeTime(
+            averagePullRequestMergeTime: calculateAveragePullRequestMergeTime(
               mergedPullRequestList
             ),
             monthSummaryData: {
@@ -137,8 +136,8 @@ class RepoSearch extends Component {
           });
         }
       },
-      error => {
-        this.handleAlert("An unexpected error ocurred, try again.");
+      () => {
+        handleAlert("An unexpected error ocurred, try again.");
       }
     );
   };
@@ -148,7 +147,7 @@ class RepoSearch extends Component {
    * @param  {Array} Issues       List of closed issues having the createdAt and closedAt properties
    * @return {Number}             Average time in miliseconds
    */
-  calculateAverageIssueCloseTime = issues => {
+  const calculateAverageIssueCloseTime = issues => {
     let averageTime = 0;
 
     if (issues.length > 0) {
@@ -172,7 +171,7 @@ class RepoSearch extends Component {
    * @param  {Array} pullRequests       List of merged pull requests having the createdAt and mergedAt properties
    * @return {Number}                   Average time in miliseconds
    */
-  calculateAveragePullRequestMergeTime = pullRequests => {
+  const calculateAveragePullRequestMergeTime = pullRequests => {
     const pullRequestData = {
       totalCount: 0,
       totalTime: 0
@@ -203,7 +202,7 @@ class RepoSearch extends Component {
    * @param  {String} pullRequestState  Alias name of the pull request specified in the query, to be accessed
    * @return {Array}                    List of pull requests
    */
-  getPullRequestList = (queryResult, pullRequestState) => {
+  const getPullRequestList = (queryResult, pullRequestState) => {
     return queryResult.data.data.repository[pullRequestState].edges.map(
       edge => edge.node
     );
@@ -216,7 +215,7 @@ class RepoSearch extends Component {
    * @param  {String} pullRequestState  Alias name of the issue specified in the query, to be accessed
    * @return {Array}                    List of issues
    */
-  getIssueList = (queryResult, issueState) => {
+  const getIssueList = (queryResult, issueState) => {
     return queryResult.data.data.repository[issueState].edges.map(
       edge => edge.node
     );
@@ -227,42 +226,31 @@ class RepoSearch extends Component {
    * @param  {Object} queryResult       Actual raw api result
    * @return {Array}                    List of error messages
    */
-  getErrorMessages = queryResult => {
+  const getErrorMessages = queryResult => {
     return queryResult.data.errors
       ? queryResult.data.errors.map(err => err.message)
       : [];
   };
 
-  componentDidMount() {
-    this.handleOwnerChange(this.props.ownerName);
-    this.handleRepoChange(this.props.repoName);
+  return (
+    <form onSubmit={handleSubmit}>
+      <input
+        placeholder="Owner"
+        type="text"
+        value={ownerValue}
+        onChange={handleOwnerChange}
+      />
 
-    if (this.props.ownerName && this.props.repoName) {
-      this.fetchData(this.props.ownerName, this.props.repoName);
-    }
-  }
-
-  render() {
-    return (
-      <form onSubmit={this.handleSubmit}>
-        <input
-          placeholder="Owner"
-          type="text"
-          value={this.state.ownerValue}
-          onChange={this.handleOwnerChange}
-        />
-
-        <input
-          placeholder="Repo"
-          type="text"
-          className="blurred"
-          value={this.state.repoValue}
-          onChange={this.handleRepoChange}
-        />
-        <input type="submit" value="Submit" hidden />
-      </form>
-    );
-  }
+      <input
+        placeholder="Repo"
+        type="text"
+        className="blurred"
+        value={repoValue}
+        onChange={handleRepoChange}
+      />
+      <input type="submit" value="Submit" hidden />
+    </form>
+  );
 }
 
 export default RepoSearch;
