@@ -1,19 +1,23 @@
-import React, { Component } from "react";
+import React, { useContext } from "react";
 import "./TimeTextCard.css";
 import Loader from "../loader/Loader";
 import DateTimeUtils from "../../helpers/date-time-utils";
+import { LoadingContext } from "../../contexts/LoadingContext";
 
-class TimeTextCard extends Component {
+export const TimeTextCard = ({time, titleText}) => {
+
+  const isLoading = useContext(LoadingContext);
+
   /**
    * @description Based on the time prop, render the total time in the following format:
    * XXdays XXhXXm
    * @return {String} The built text in the format described
    */
-  buildTimeText = () => {
+  const buildTimeText = () => {
     let dayPart = "";
 
     const totalDaysHoursMinutes = DateTimeUtils.getTotalDaysHoursMinutes(
-      this.props.time
+      time
     );
 
     if (totalDaysHoursMinutes.days > 0) {
@@ -35,26 +39,24 @@ class TimeTextCard extends Component {
    * @description Checks wether the component is loading or not and renders the loader component or the text itself
    * @return {Component} Loader component or the text that will be rendered on the body of the card
    */
-  checkLoading = () => {
-    return this.props.isLoading ? (
+  const checkLoading = () => {
+    return isLoading ? (
       <Loader />
     ) : (
-      <div>{this.props.time ? this.buildTimeText() : "No data to display"}</div>
+      <div>{time ? buildTimeText() : "No data to display"}</div>
     );
   };
 
-  render() {
-    return (
-      <div className="thin-shadow bg-white rounded">
-        <div className="text-card-head">
-          <span className="text-head">
-            {this.props.titleText ? this.props.titleText : "No data to display"}
-          </span>
-        </div>
-        <div className="text-card-body">{this.checkLoading()}</div>
+  return (
+    <div className="thin-shadow bg-white rounded">
+      <div className="text-card-head">
+        <span className="text-head">
+          {titleText ? titleText : "No data to display"}
+        </span>
       </div>
-    );
-  }
+      <div className="text-card-body">{checkLoading()}</div>
+    </div>
+  );
 }
 
 export default TimeTextCard;
