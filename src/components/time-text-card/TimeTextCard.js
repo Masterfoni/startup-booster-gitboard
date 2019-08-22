@@ -6,7 +6,7 @@ import { LoadingContext } from "../../contexts/LoadingContext";
 
 export const TimeTextCard = ({time, titleText}) => {
 
-  const isLoading = useContext(LoadingContext);
+  const {loading} = useContext(LoadingContext);
 
   /**
    * @description Based on the time prop, render the total time in the following format:
@@ -40,7 +40,7 @@ export const TimeTextCard = ({time, titleText}) => {
    * @return {Component} Loader component or the text that will be rendered on the body of the card
    */
   const checkLoading = () => {
-    return isLoading ? (
+    return loading ? (
       <Loader />
     ) : (
       <div>{time ? buildTimeText() : "No data to display"}</div>

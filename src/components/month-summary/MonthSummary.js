@@ -8,7 +8,7 @@ import { LoadingContext } from "../../contexts/LoadingContext";
 export const MonthSummary = ({monthSummaryData, titleText}) => {
   const [pullRequestMode, setPullRequestMode] = useState(true);
 
-  const isLoading = useContext(LoadingContext);
+  const {loading} = useContext(LoadingContext);
 
   useEffect(() => {
     if (monthSummaryData) {
@@ -309,7 +309,7 @@ export const MonthSummary = ({monthSummaryData, titleText}) => {
    * @return {Component} Loader component or the chart and tabs will be rendered on the body of the card
    */
   const checkLoading = () => {
-    return isLoading ? (
+    return loading ? (
       <Loader />
     ) : (
       <>

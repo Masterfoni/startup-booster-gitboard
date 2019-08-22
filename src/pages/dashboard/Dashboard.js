@@ -6,7 +6,7 @@ import MonthSummary from "../../components/month-summary/MonthSummary";
 import Sidenav from "../../components/sidenav/Sidenav";
 import TimeTextCard from "../../components/time-text-card/TimeTextCard";
 import { ToastContainer, toast } from "react-toastify";
-import { LoadingContext } from "../../contexts/LoadingContext";
+import { LoadingProvider } from "../../contexts/LoadingContext";
 
 export const Dashboard = ({match}) => {
 
@@ -14,17 +14,12 @@ export const Dashboard = ({match}) => {
   const [averageIssueCloseTime, setAverageIssueCloseTime] = useState(null);
   const [averagePullRequestMergeTime, setAveragePullRequestMergeTime] = useState(null);
   const [monthSummaryData, setMonthSummaryData] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
 
   const handleAlert = alertMessage => {
     toast(alertMessage, {
       className: "gitboard-default-toast",
       progressClassName: "gitboard-default-toast-progress"
     });
-  };
-
-  const handleToggleLoading = isLoading => {
-    setIsLoading(isLoading);
   };
 
   const handleDataFetched = gitHubData => {
@@ -37,7 +32,8 @@ export const Dashboard = ({match}) => {
   return (
     <>
       <Sidenav />
-      <LoadingContext.Provider value={isLoading}>
+      <LoadingProvider>
+        <>
         <div className="container-fluid bg-light">
           <div className="row thin-shadow mb-4 bg-white">
             <div className="col-md-12">
@@ -46,7 +42,6 @@ export const Dashboard = ({match}) => {
                 ownerName={match.params.ownerName}
                 repoName={match.params.repoName}
                 onDataFetched={handleDataFetched}
-                onToggleLoading={handleToggleLoading}
                 onAlertMessage={handleAlert}
               />
             </div>
@@ -86,7 +81,8 @@ export const Dashboard = ({match}) => {
             </div>
           </div>
         </div>
-      </LoadingContext.Provider>
+        </>
+      </LoadingProvider>
       <ToastContainer />
     </>
   );

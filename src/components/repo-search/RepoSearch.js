@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import "./RepoSearch.css";
 import GithubRequestHelper from "../../helpers/github-request-helper";
+import { LoadingContext } from "../../contexts/LoadingContext";
 
-const RepoSearch = ({ownerName, repoName, onDataFetched, onToggleLoading, onAlertMessage}) => {
+const RepoSearch = ({ownerName, repoName, onDataFetched, onAlertMessage}) => {
 
   const [ownerValue, setOwnerValue] = useState("");
   const [repoValue, setRepoValue] = useState("");
+
+  const {setLoading} = useContext(LoadingContext);
 
   useEffect(() => {
     handleOwnerChange(ownerName);
@@ -59,7 +62,7 @@ const RepoSearch = ({ownerName, repoName, onDataFetched, onToggleLoading, onAler
    * @param  {boolean}  isLoading   Whether or not a request is loading (waiting for response)
    */
   const handleToggleLoading = isLoading => {
-    onToggleLoading(isLoading);
+    setLoading(isLoading);
   };
 
   /**

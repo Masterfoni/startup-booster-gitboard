@@ -7,7 +7,7 @@ import { LoadingContext } from "../../contexts/LoadingContext";
 
 export const AverageMergeTime = ({ mergedPullRequestList, titleText}) => {
 
-  const isLoading = useContext(LoadingContext);
+  const {loading} = useContext(LoadingContext);
 
   useEffect(() => {
     if (
@@ -201,7 +201,7 @@ export const AverageMergeTime = ({ mergedPullRequestList, titleText}) => {
    * @return {Component} Loader component or the bar chart
    */
   const checkLoading = () => {
-    return isLoading ? (
+    return loading ? (
       <Loader />
     ) : (
       <div>
