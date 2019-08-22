@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import "./AverageMergeTime.css";
 import Chart from "chart.js";
 import Loader from "../loader/Loader";
@@ -8,6 +8,17 @@ import { LoadingContext } from "../../contexts/LoadingContext";
 export const AverageMergeTime = ({ mergedPullRequestList, titleText}) => {
 
   const isLoading = useContext(LoadingContext);
+
+  useEffect(() => {
+    if (
+      mergedPullRequestList &&
+      mergedPullRequestList.length > 0
+    ) {
+      const organizedPullRequestList = organizePullRequestData();
+      const chartData = buildBarChartData(organizedPullRequestList);
+      buildChart(chartData);
+    }
+  });
 
   /**
    * @description Calculates the average given the sum and total number of elements
@@ -182,17 +193,6 @@ export const AverageMergeTime = ({ mergedPullRequestList, titleText}) => {
           }
         }
       });
-    }
-  };
-
-  const componentDidUpdate = () => {
-    if (
-      mergedPullRequestList &&
-      mergedPullRequestList.length > 0
-    ) {
-      const organizedPullRequestList = organizePullRequestData();
-      const chartData = buildBarChartData(organizedPullRequestList);
-      buildChart(chartData);
     }
   };
 
