@@ -1,17 +1,21 @@
-import React, { Component } from "react";
+import React, { useContext } from "react";
 import "./AverageMergeTime.css";
 import Chart from "chart.js";
 import Loader from "../loader/Loader";
 import DateTimeUtils from "../../helpers/date-time-utils";
+import { LoadingContext } from "../../contexts/LoadingContext";
 
-class AverageMergeTime extends Component {
+export const AverageMergeTime = ({ mergedPullRequestList, titleText}) => {
+
+  const isLoading = useContext(LoadingContext);
+
   /**
    * @description Calculates the average given the sum and total number of elements
    * @param {Number} totalTime  Total time in miliseconds
    * @param {Number} totalCount Total number of elements
    * @return {Number} The average time
    */
-  calculateAverageTime = (totalTime, totalCount) => {
+  const calculateAverageTime = (totalTime, totalCount) => {
     return totalCount > 0 ? totalTime / totalCount : 0;
   };
 
@@ -21,16 +25,16 @@ class AverageMergeTime extends Component {
    * @param {Object} pullRequestData  Object containing data organized by pull request size
    * @return {Object} Object contaning the data needed for the chart do be rendered, including labels
    */
-  buildBarChartData = pullRequestData => {
-    const smallPullRequestAverageTime = this.calculateAverageTime(
+  const buildBarChartData = pullRequestData => {
+    const smallPullRequestAverageTime = calculateAverageTime(
       pullRequestData.smallPullRequestsData.totalTime,
       pullRequestData.smallPullRequestsData.totalCount
     );
-    const mediumPullRequestAverageTime = this.calculateAverageTime(
+    const mediumPullRequestAverageTime = calculateAverageTime(
       pullRequestData.mediumPullRequestsData.totalTime,
       pullRequestData.mediumPullRequestsData.totalCount
     );
-    const largePullRequestAverageTime = this.calculateAverageTime(
+    const largePullRequestAverageTime = calculateAverageTime(
       pullRequestData.largePullRequestsData.totalTime,
       pullRequestData.largePullRequestsData.totalCount
     );
@@ -58,7 +62,7 @@ class AverageMergeTime extends Component {
    * @return {Object} Object contaning thre arrays, one for small, one for medium
    * and one for large pull requests
    */
-  organizePullRequestData = () => {
+  const organizePullRequestData = () => {
     const smallPullRequestsData = {
       totalCount: 0,
       totalTime: 0
@@ -72,7 +76,7 @@ class AverageMergeTime extends Component {
       totalTime: 0
     };
 
-    this.props.mergedPullRequestList.forEach(pullRequest => {
+    mergedPullRequestList.forEach(pullRequest => {
       let totalModifications = pullRequest.additions + pullRequest.deletions;
 
       if (totalModifications <= 100) {
@@ -107,7 +111,7 @@ class AverageMergeTime extends Component {
    * @description Builds the chart element with the needed options
    * @param {Object} chartData  Object containing labels and data needed for the chart rendering
    */
-  buildChart = chartData => {
+  const buildChart = chartData => {
     const chartElement = document.getElementById("defBarChart");
     if (chartElement) {
       let context = chartElement.getContext("2d");
@@ -181,14 +185,14 @@ class AverageMergeTime extends Component {
     }
   };
 
-  componentDidUpdate = () => {
+  const componentDidUpdate = () => {
     if (
-      this.props.mergedPullRequestList &&
-      this.props.mergedPullRequestList.length > 0
+      mergedPullRequestList &&
+      mergedPullRequestList.length > 0
     ) {
-      const organizedPullRequestList = this.organizePullRequestData();
-      const chartData = this.buildBarChartData(organizedPullRequestList);
-      this.buildChart(chartData);
+      const organizedPullRequestList = organizePullRequestData();
+      const chartData = buildBarChartData(organizedPullRequestList);
+      buildChart(chartData);
     }
   };
 
@@ -196,13 +200,13 @@ class AverageMergeTime extends Component {
    * @description Checks wether the component is loading or not and renders the loader component or the chart content
    * @return {Component} Loader component or the bar chart
    */
-  checkLoading = () => {
-    return this.props.isLoading ? (
+  const checkLoading = () => {
+    return isLoading ? (
       <Loader />
     ) : (
       <div>
-        {this.props.mergedPullRequestList &&
-        this.props.mergedPullRequestList.length > 0 ? (
+        {mergedPullRequestList &&
+        mergedPullRequestList.length > 0 ? (
           <canvas id="defBarChart" />
         ) : (
           "No data to display"
@@ -211,16 +215,14 @@ class AverageMergeTime extends Component {
     );
   };
 
-  render() {
-    return (
-      <div className="thin-shadow bg-white rounded">
-        <div className="bar-chart-card-head">
-          {this.props.titleText ? this.props.titleText : "No data to display"}
-        </div>
-        <div className="bar-chart-card-body">{this.checkLoading()}</div>
+  return (
+    <div className="thin-shadow bg-white rounded">
+      <div className="bar-chart-card-head">
+        {titleText ? titleText : "No data to display"}
       </div>
-    );
-  }
+      <div className="bar-chart-card-body">{checkLoading()}</div>
+    </div>
+  );
 }
 
 export default AverageMergeTime;
