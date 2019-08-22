@@ -1,18 +1,21 @@
-import React, { Component } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import "./MonthSummary.css";
 import Chart from "chart.js";
 import Loader from "../loader/Loader";
 import moment from "moment";
+import { LoadingContext } from "../../contexts/LoadingContext";
 
-class MonthSummary extends Component {
-  constructor(props) {
-    super(props);
+export const MonthSummary = ({monthSummaryData, titleText}) => {
+  const [pullRequestMode, setPullRequestMode] = useState(true);
 
-    this.state = {
-      pullRequestMode: true,
-      monthSummaryData: null
-    };
-  }
+  const isLoading = useContext(LoadingContext);
+
+  useEffect(() => {
+    if (monthSummaryData) {
+      var monthSummaryStatistics = getMonthSummaryStatistics();
+      buildChart(monthSummaryStatistics);
+    }
+  });
 
   /**
    * @description Checks if the selected statistics to show are about issues or pull requests
@@ -20,7 +23,7 @@ class MonthSummary extends Component {
    * @param  {Object} monthSummaryStatistics       Object containing different lists of pull requests
    * grouped by state, and lists of issues grouped by state
    */
-  buildChart = monthSummaryStatistics => {
+  const buildChart = monthSummaryStatistics => {
     const chartElement = document.getElementById("defLineChart");
 
     if (chartElement) {
@@ -28,9 +31,9 @@ class MonthSummary extends Component {
 
       const monthSummaryChart = new Chart(
         context,
-        this.state.pullRequestMode
-          ? this.getPullRequestModeOptions(monthSummaryStatistics)
-          : this.getIssueModeOptions(monthSummaryStatistics)
+        pullRequestMode
+          ? getPullRequestModeOptions(monthSummaryStatistics)
+          : getIssueModeOptions(monthSummaryStatistics)
       );
 
       document.getElementById(
@@ -44,14 +47,14 @@ class MonthSummary extends Component {
    * over a period of a month (30 days ago until now)
    * @return {Array}  Array of objects representing days contaning pull requests and issue statistics
    */
-  getMonthSummaryStatistics = () => {
-    const mergedPullRequestList = this.props.monthSummaryData
+  const getMonthSummaryStatistics = () => {
+    const mergedPullRequestList = monthSummaryData
       .mergedPullRequestList;
-    const openPullRequestList = this.props.monthSummaryData.openPullRequestList;
-    const closedPullRequestList = this.props.monthSummaryData
+    const openPullRequestList = monthSummaryData.openPullRequestList;
+    const closedPullRequestList = monthSummaryData
       .closedPullRequestList;
-    const openIssueList = this.props.monthSummaryData.openIssueList;
-    const closedIssueList = this.props.monthSummaryData.closedIssueList;
+    const openIssueList = monthSummaryData.openIssueList;
+    const closedIssueList = monthSummaryData.closedIssueList;
 
     var monthSummaryStatistics = [];
 
@@ -106,7 +109,7 @@ class MonthSummary extends Component {
    * @param {Array} monthSummaryStatistics Array of days with statistics about issues and pull requests
    * @return {Object} Options object that will configure style, tooltip and label functions of the chart
    */
-  getIssueModeOptions = monthSummaryStatistics => {
+  const getIssueModeOptions = monthSummaryStatistics => {
     return {
       type: "line",
       data: {
@@ -183,7 +186,7 @@ class MonthSummary extends Component {
    * @param {Array} monthSummaryStatistics Array of days with statistics about issues and pull requests
    * @return {Object} Options object that will configure style, tooltip and label functions of the chart
    */
-  getPullRequestModeOptions = monthSummaryStatistics => {
+  const getPullRequestModeOptions = monthSummaryStatistics => {
     return {
       type: "line",
       data: {
@@ -270,18 +273,16 @@ class MonthSummary extends Component {
    * @description Change between pull request and issue mode to view different charts
    * @param {boolean} isPullRequest boolean representing if the pull request tab is active or not
    */
-  changeTab = isPullRequest => {
-    this.setState({
-      pullRequestMode: isPullRequest
-    });
+  const changeTab = isPullRequest => {
+    setPullRequestMode(isPullRequest);
   };
 
   /**
    * @description Count the total number of pull requests across all states
    * @return {Number}     Total number of pull requests
    */
-  getTotalPullRequestsCount = () => {
-    return this.getMonthSummaryStatistics().reduce(
+  const getTotalPullRequestsCount = () => {
+    return getMonthSummaryStatistics().reduce(
       (previousTotal, dayInfo) =>
         previousTotal +
         dayInfo.totalPullRequestsMerged +
@@ -295,8 +296,8 @@ class MonthSummary extends Component {
    * @description Count the total number of issues across all states
    * @return {Number}     Total number of issues
    */
-  getTotalIssuesCount = () => {
-    return this.getMonthSummaryStatistics().reduce(
+  const getTotalIssuesCount = () => {
+    return getMonthSummaryStatistics().reduce(
       (previousTotal, dayInfo) =>
         previousTotal + dayInfo.totalIssuesClosed + dayInfo.totalIssuesOpened,
       0
@@ -307,38 +308,38 @@ class MonthSummary extends Component {
    * @description Checks wether the component is loading or not and renders the loader component or the chart content
    * @return {Component} Loader component or the chart and tabs will be rendered on the body of the card
    */
-  checkLoading = () => {
-    return this.props.isLoading ? (
+  const checkLoading = () => {
+    return isLoading ? (
       <Loader />
     ) : (
       <>
-        {this.props.monthSummaryData ? (
+        {monthSummaryData ? (
           <>
             <div className="row mb-4 text-left pl-4">
               <div
-                onClick={() => this.setState({ pullRequestMode: true })}
+                onClick={() => setPullRequestMode(true)}
                 className={
                   "col-md-2 col-sm-4 selector " +
-                  (this.state.pullRequestMode ? "active" : "inactive")
+                  (pullRequestMode ? "active" : "inactive")
                 }
               >
                 <span className="selector-title">Pull Requests</span>
                 <br />
                 <span className="selector-quantity">
-                  {this.getTotalPullRequestsCount()}
+                  {getTotalPullRequestsCount()}
                 </span>
               </div>
               <div
-                onClick={() => this.setState({ pullRequestMode: false })}
+                onClick={() => setPullRequestMode(false)}
                 className={
                   "col-md-2 col-sm-4 selector " +
-                  (this.state.pullRequestMode ? "inactive" : "active")
+                  (pullRequestMode ? "inactive" : "active")
                 }
               >
                 <span className="selector-title">Issues</span>
                 <br />
                 <span className="selector-quantity">
-                  {this.getTotalIssuesCount()}
+                  {getTotalIssuesCount()}
                 </span>
               </div>
             </div>
@@ -347,7 +348,7 @@ class MonthSummary extends Component {
 
         <div className="row pl-4">
           <div className="col-12">
-            {this.props.monthSummaryData ? (
+            {monthSummaryData ? (
               <>
                 <canvas id="defLineChart" />
                 <div id="chartjsLegend" className="chartjsLegend table" />
@@ -361,23 +362,14 @@ class MonthSummary extends Component {
     );
   };
 
-  componentDidUpdate = () => {
-    if (this.props.monthSummaryData) {
-      var monthSummaryStatistics = this.getMonthSummaryStatistics();
-      this.buildChart(monthSummaryStatistics);
-    }
-  };
-
-  render() {
-    return (
-      <div className="thin-shadow bg-white rounded">
-        <div className="line-chart-card-head">
-          {this.props.titleText ? this.props.titleText : "No data to display"}
-        </div>
-        <div className="line-chart-card-body">{this.checkLoading()}</div>
+  return (
+    <div className="thin-shadow bg-white rounded">
+      <div className="line-chart-card-head">
+        {titleText ? titleText : "No data to display"}
       </div>
-    );
-  }
+      <div className="line-chart-card-body">{checkLoading()}</div>
+    </div>
+  );
 }
 
 export default MonthSummary;
