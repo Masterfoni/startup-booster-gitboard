@@ -10,6 +10,7 @@ const axiosGitHubGraphQL = axios.create({
   }
 });
 
+
 export default class GithubRequestHelper {
   /**
    * @description This is the default request function for the app's main page,
