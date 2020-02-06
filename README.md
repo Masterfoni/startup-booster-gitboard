@@ -6,6 +6,9 @@ This project is a Dashboard application that shows metrics about a specific repo
 
 ## Getting Started
 
+### Live Version
+You can access an up-to-date version of the app here: [startup-booster-gitboard](https://startup-booster-gitboard.herokuapp.com/).
+
 ### Prerequisites
 You need to have node.js installed in your computer, you can download it and install in this [link](https://nodejs.org/en/).
 
