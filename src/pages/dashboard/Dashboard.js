@@ -35,7 +35,7 @@ export const Dashboard = ({match}) => {
       <LoadingProvider>
         <>
         <div className="container-fluid bg-light">
-          <div className="row thin-shadow mb-4 bg-white">
+          <div className="row thin-shadow mb-4 bg-white sticky-top">
             <div className="col-md-12">
               <span />
               <RepoSearch
@@ -47,7 +47,7 @@ export const Dashboard = ({match}) => {
             </div>
           </div>
 
-          <div className="row ml-2 mr-2 mb-4">
+          <div className="row ml-2 mr-2 mb-4 first-row">
             <div className="col-12">
               <AverageMergeTime
                 mergedPullRequestList={mergedPullRequestList}

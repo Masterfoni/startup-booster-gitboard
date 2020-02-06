@@ -1,0 +1,9 @@
+.sticky-top {
+    position: fixed;
+    z-index: 10;
+    width: 100%;
+}
+
+.first-row {
+    margin-top: 6rem;
+}
