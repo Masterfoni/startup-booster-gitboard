@@ -1,13 +1,11 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import "./NotFound.css";
-import Sidenav from "../../components/sidenav/Sidenav";
 
 class NotFound extends Component {
   render() {
     return (
       <>
-        <Sidenav />
         <div className="container">
           <div className="row pt-4">
             <div className="col-12">

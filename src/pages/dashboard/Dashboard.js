@@ -3,7 +3,6 @@ import "./Dashboard.css";
 import RepoSearch from "../../components/repo-search/RepoSearch";
 import AverageMergeTime from "../../components/average-merge-time/AverageMergeTime";
 import MonthSummary from "../../components/month-summary/MonthSummary";
-import Sidenav from "../../components/sidenav/Sidenav";
 import TimeTextCard from "../../components/time-text-card/TimeTextCard";
 import { ToastContainer, toast } from "react-toastify";
 import { LoadingProvider } from "../../contexts/LoadingContext";
@@ -31,7 +30,6 @@ export const Dashboard = ({match}) => {
 
   return (
     <>
-      <Sidenav />
       <LoadingProvider>
         <>
         <div className="container-fluid bg-light">
